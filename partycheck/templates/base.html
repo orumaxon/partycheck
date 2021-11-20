@@ -22,9 +22,7 @@
 
     <body class="{% block body_style %}{% endblock %}">
 
-      <header>
-        {% include 'menu.html' %}
-      </header>
+      {% block menu %}{% endblock %}
 
       <main class="{% block main_style %}{% endblock %}">
         {% block main %}

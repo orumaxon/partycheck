@@ -24,10 +24,10 @@
 
       <ul class="navbar-nav">
         <li class="nav-item px-sm-2 py-2 py-sm-0">
-          <a class="nav-link btn btn-sm btn-outline-success text-white" href="">Вход</a>
+          <a class="nav-link btn btn-sm btn-outline-success text-white" href="{% url 'account:signin' %}">Вход</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-sm btn-success text-white" href="">Регистрация</a>
+          <a class="nav-link btn btn-sm btn-success text-white" href="{% url 'account:signup' %}">Регистрация</a>
         </li>
       </ul>
 
