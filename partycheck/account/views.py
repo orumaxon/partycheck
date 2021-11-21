@@ -1,3 +1,16 @@
-from django.shortcuts import render
+from django.contrib.auth import views
 
-# Create your views here.
+from account.forms import SignInForms
+
+
+class SignInView(views.LoginView):
+    form_class = SignInForms
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        return '/'
+
+
+class SingOutView(views.LogoutView):
+    next_page = '/'
+
