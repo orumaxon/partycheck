@@ -1,4 +1,4 @@
-from partycheck.utils.color import Color, cprint
+from utils.color import Color, cprint
 
 # -------- Определение должников --------
 
