@@ -13,7 +13,7 @@ class PartyGroupAdmin(admin.ModelAdmin):
 
 @admin.register(PartyPayment)
 class PartyPaymentAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'created_at']
+    list_display = ['__str__', 'party_group', 'created_at']
     readonly_fields = ['created_at']
     raw_id_fields = ['party_group', 'investor']
     filter_horizontal = ['debtors']

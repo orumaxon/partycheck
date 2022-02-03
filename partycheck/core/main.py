@@ -25,6 +25,7 @@ pay_list = [
     (700, __all__),
 ]
 
+
 for money, people_list in pay_list:
     people_count = len(people_list)
     sum_dolg = money // people_count
