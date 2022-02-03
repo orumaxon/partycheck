@@ -16,21 +16,13 @@ class PartyGroup(CreatedAtMixin, models.Model):
         verbose_name_plural = 'Компании/группы'
 
     name = models.CharField(verbose_name='Наименование', max_length=150)
-    creator = models.ForeignKey(
-        User, models.SET_NULL,
-        verbose_name='Создатель',
-        null=True,
-        related_name='party_groups',
-    )
-    members = models.ManyToManyField(
-        User,
-        verbose_name='Участники',
-        blank=True,
-        related_name='party_members',
-    )
+    creator = models.ForeignKey(User, models.SET_NULL, verbose_name='Создатель',
+                                null=True, related_name='party_groups')
+    members = models.ManyToManyField(User, verbose_name='Участники',
+                                     blank=True, related_name='party_members')
 
     def __str__(self):
-        return f'#{self.id} Компания: {self.name}'
+        return f'#{self.id} Компания: {self.name} ({self.members.count()})'
 
     def get_debt_by_user(self, user: User):
         """Получить общий долг должника компании"""
@@ -62,25 +54,14 @@ class PartyPayment(CreatedAtMixin, models.Model):
         verbose_name = 'Расход на компанию'
         verbose_name_plural = 'Расходы на компанию'
 
-    party_group = models.ForeignKey(
-        PartyGroup, models.CASCADE,
-        verbose_name='Компания/группа',
-        related_name='party_payments',
-    )
+    party_group = models.ForeignKey(PartyGroup, models.CASCADE, verbose_name='Компания/группа',
+                                    related_name='party_payments')
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
-    investor = models.ForeignKey(
-        User, models.SET_NULL,
-        verbose_name='Кто платил',
-        null=True,
-        related_name='party_payments',
-    )
+    investor = models.ForeignKey(User, models.SET_NULL, verbose_name='Кто платил',
+                                 null=True, related_name='party_payments')
     price = models.FloatField(verbose_name='Сумма расходов')
-    debtors = models.ManyToManyField(
-        User,
-        verbose_name='На кого делить расходы',
-        blank=True,
-        related_name='party_debtors',
-    )
+    debtors = models.ManyToManyField(User, verbose_name='На кого делить расходы',
+                                     blank=True, related_name='party_debtors')
     comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
 
     def __str__(self):
@@ -99,23 +80,12 @@ class PartyTransaction(CreatedAtMixin, models.Model):
         verbose_name = 'Денежный перевод между участниками компании'
         verbose_name_plural = 'Денежные переводы между участниками компании'
 
-    party_group = models.ForeignKey(
-        PartyGroup, models.CASCADE,
-        verbose_name='Компания/группа',
-        related_name='party_transactions',
-    )
-    sender = models.ForeignKey(
-        User, models.SET_NULL,
-        verbose_name='Отправитель',
-        null=True,
-        related_name='party_sender_transactions',
-    )
-    recipient = models.ForeignKey(
-        User, models.SET_NULL,
-        verbose_name='Получатель',
-        null=True,
-        related_name='party_recipient_transactions',
-    )
+    party_group = models.ForeignKey(PartyGroup, models.CASCADE, verbose_name='Компания/группа',
+                                    related_name='party_transactions')
+    sender = models.ForeignKey(User, models.SET_NULL, verbose_name='Отправитель',
+                               null=True, related_name='party_sender_transactions')
+    recipient = models.ForeignKey(User, models.SET_NULL, verbose_name='Получатель',
+                                  null=True, related_name='party_recipient_transactions')
     value = models.FloatField(verbose_name='Сумма перевода')
     comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
 
