@@ -1,0 +1,19 @@
+<!doctype html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Компания{% endblock %}
+
+{% block menu %}{% include 'menu.html' %}{% endblock %}
+
+{% block main %}
+    <p>Компания: {{ partygroup.name }}</p>
+
+    <p>
+        Участники:
+        {% for member in partygroup.members.all %}
+            {{ member }}
+        {% endfor %}
+    </p>
+
+{% endblock %}

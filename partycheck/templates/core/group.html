@@ -1,0 +1,29 @@
+<!doctype html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Компания{% endblock %}
+
+{% block menu %}{% include 'menu.html' %}{% endblock %}
+
+{% block main %}
+    <p>Компания: {{ partygroup.name }}</p>
+
+    <p>
+        Участники:
+        {% for member in partygroup.members.all %}
+            {{ member }}
+        {% endfor %}
+    </p>
+
+    Траты:
+    {% for p in partygroup.party_payments.all %}
+        <p>{{ p }}</p>
+    {% endfor %}
+
+    Баланс:
+    {% for m, value in partygroup.get_debt_by_members %}
+        <p>{{ m }}: {{ value }}</p>
+    {% endfor %}
+
+{% endblock %}
