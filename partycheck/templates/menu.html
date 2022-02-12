@@ -20,16 +20,26 @@
 
           <ul class="navbar-nav">
               {% if user.is_authenticated %}
-                  <li class="nav-item">
-                      <a class="nav-link" href="{% url 'account:detail' user.id %}">
-                          {{ user.username }}
-                          <i class="bi bi-person-circle"></i>
-                      </a>
 
-                  </li>
                   <li class="nav-item">
-                      <a class="nav-link btn btn-sm text-white" href="{% url 'account:signout' %}">Выйти</a>
+                      <div class="dropdown">
+                          <a href="#" class="nav-link d-block link-dark text-decoration-none dropdown-toggle"
+                             id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                              {{ user.username }}
+                              <i class="bi bi-person-circle"></i>
+{#                            <img src="https://github.com/mdo.png" alt="mdo" class="rounded-circle" width="32" height="32">#}
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownUser1"
+                              style="inset: auto 0px auto auto">
+                              <li><a class="dropdown-item" href="#">Долги</a></li>
+                              <li><a class="dropdown-item" href="#">Настройки</a></li>
+                              <li><a class="dropdown-item" href="{% url 'account:detail' user.id %}">Профиль</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="{% url 'account:signout' %}">Выйти</a></li>
+                          </ul>
+                        </div>
                   </li>
+
               {% else %}
                   <li class="nav-item px-sm-2 py-2 py-sm-0">
                       <a class="nav-link btn btn-sm btn-outline-success text-white" href="{% url 'account:signin' %}">Вход</a>
