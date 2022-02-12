@@ -1,14 +1,11 @@
 from django.urls import path
-from django.views.generic import TemplateView
 
-from .views import SignInView, SingOutView, AccountDetailView
+from .views import AccountDetailView, SignInView, SignUpView, SingOutView
 
 app_name = 'account'
 urlpatterns = [
-    path('signin/', SignInView.as_view(template_name='account/signin.html'), name='signin'),
+    path('signin/', SignInView.as_view(), name='signin'),
+    path('signup/', SignUpView.as_view(), name='signup'),
     path('signout/', SingOutView.as_view(), name='signout'),
-
     path('<int:pk>/', AccountDetailView.as_view(), name='detail'),
-
-    path('signup/', TemplateView.as_view(template_name='account/signup.html'), name='signup'),
 ]

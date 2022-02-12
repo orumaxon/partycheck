@@ -11,27 +11,32 @@
 {% block title %}Вход{% endblock %}
 
 {% block body_style %}text-center{% endblock %}
+
 {% block main_style %}w-100{% endblock %}
 {% block main %}
-    <div class="form-signin border">
+    <div class="form-signin">
+
         <form method="post" action="{% url 'account:signin' %}">
             {% csrf_token %}
-            <!-- <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-            <i class="bi bi-person-circle" style="font-size: 2rem"></i>
-            <h1 class="h3 mb-3 fw-normal">Войти в долговую яму</h1>
-            {{ form }}
+            <a href="/" class="link-dark fw-bold">
+                <i class="bi bi-receipt" style="font-size: 4rem"></i>
+            </a>
+            <h1 class="h4 mb-3 fw-normal">Войти в долговую яму</h1>
+            {% for field in form %}
+                {{ field }}
+            {% endfor %}
 
-            <!-- <div class="checkbox mb-3"> -->
-              <!-- <label> -->
-                <!-- <input type="checkbox" value="remember-me"> Remember me -->
-              <!-- </label> -->
-            <!-- </div> -->
+            {% for error in form.non_field_errors %}
+                <div class="invalid-feedback">
+                    {{ error}}
+                </div>
+            {% endfor %}
+
             <button class="btn btn-lg btn-success w-100 my-2" type="submit">Войти</button>
-            <!-- <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p> -->
         </form>
     </div>
 
-    <div class="form-sign-info mt-5 border">
+    <div class="form-sign-info mt-5">
        <p class="login-callout mt-3">В первый раз? <a href="{% url 'account:signup' %}">Создать аккаунт</a></p>
     </div>
 {% endblock %}
