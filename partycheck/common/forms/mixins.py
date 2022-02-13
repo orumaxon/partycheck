@@ -16,3 +16,8 @@ class DefaultAttrWidgetMixin:
                 form_fields[field_name].widget.attrs['placeholder'] = model_field.verbose_name.capitalize()
             except FieldDoesNotExist:
                 form_fields[field_name].widget.attrs['placeholder'] = form_fields[field_name].label
+
+    def clean(self):
+        for error_field in self.errors:
+            self.fields[error_field].widget.attrs['class'] += ' is-invalid'
+        return super().clean()

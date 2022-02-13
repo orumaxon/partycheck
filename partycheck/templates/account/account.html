@@ -1,10 +1,8 @@
 <!doctype html>
-{% extends 'base.html' %}
+{% extends 'page.html' %}
 {% load static %}
 
 {% block title %}Аккаунт{% endblock %}
-
-{% block menu %}{% include 'menu.html' %}{% endblock %}
 
 {% block main %}
     <p>{{ user }}</p>

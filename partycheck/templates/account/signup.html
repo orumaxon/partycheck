@@ -21,7 +21,7 @@
             <a href="/" class="link-dark fw-bold">
                 <i class="bi bi-receipt" style="font-size: 4rem"></i>
             </a>
-            <h1 class="h4 mb-2 fw-normal">Регистрация в долговой яме</h1>
+            <h1 class="h4 mb-3 fw-normal">Регистрация в долгах</h1>
 
             {% for field in form %}
                 {{ field }}
@@ -47,3 +47,5 @@
      <p class="login-callout mt-3">Уже есть аккаунт? <a href="{% url 'account:signin' %}">Войти</a></p>
   </div>
 {% endblock %}
+
+{% block footer %}{% endblock %}

@@ -1,6 +1,6 @@
 from django.views import generic
 
-from core.models import PartyGroup
+from party.models import PartyGroup
 
 
 class GroupDetailView(generic.DetailView):
@@ -11,3 +11,7 @@ class GroupDetailView(generic.DetailView):
 # class PaymentDetailView(generic.DetailView):
 #     model = PartyGroup
 #     template_name = 'core/group.html'
+
+class PartyListView(generic.ListView):
+    model = PartyGroup
+    template_name = 'core/party.html'

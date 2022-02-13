@@ -29,8 +29,9 @@
         {% endblock %}
       </main>
 
-      <footer class="mb-2 text-center text-white-50">
+      <footer class="mb-2 text-center {% block footer_style %}{% endblock %}">
         {% block footer %}
+            Разработано <a class="text-decoration-none">@orumaxon</a>
         {% endblock %}
       </footer>
 

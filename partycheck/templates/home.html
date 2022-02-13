@@ -10,7 +10,7 @@
 
 {% block title %}Party Check{% endblock %}
 
-{% block body_style %}d-flex flex-column h-100 w-100 bg-dark text-white{% endblock %}
+{% block body_style %}d-flex flex-column h-100 bg-dark text-white{% endblock %}
 {% block main_style %}my-auto text-center{% endblock %}
 {% block menu %}{% include 'menu.html' %}{% endblock %}
 {% block main %}
@@ -23,4 +23,7 @@
     </p>
 {% endblock %}
 
-{% block footer %}Разработано <a class="text-decoration-none text-white">@orumaxon</a>{% endblock %}
+{% block footer_style %}text-white-50{% endblock %}
+{% block footer %}
+    Разработано <a class="text-decoration-none text-white">@orumaxon</a>
+{% endblock %}

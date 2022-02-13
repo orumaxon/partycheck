@@ -58,11 +58,6 @@ class SignUpForm(DefaultAttrWidgetMixin, forms.Form):
             )
         return password_repeat
 
-    def clean(self):
-        for error_field in self.errors:
-            self.fields[error_field].widget.attrs['class'] += ' is-invalid'
-        return super().clean()
-
     def save(self):
         user = UserModel.objects.create_user(
             username=self.cleaned_data.get('username'),
