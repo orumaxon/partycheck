@@ -1,0 +1,30 @@
+<!doctype html>
+{% extends 'page.html' %}
+{% load static %}
+
+{% block title %}Компания{% endblock %}
+
+{% block main %}
+    <div class="container mt-4">
+
+        <p>Компания: {{ party.name }}</p>
+
+        <p>
+            Участники:
+            {% for member in party.members.all %}
+                {{ member }}
+            {% endfor %}
+        </p>
+
+        Траты:
+        {% for p in party.payments.all %}
+            <p>{{ p }}</p>
+        {% endfor %}
+
+        Баланс:
+        {% for m, value in party.get_debt_by_members %}
+            <p>{{ m }}: {{ value }}</p>
+        {% endfor %}
+
+    </div>
+{% endblock %}

@@ -1,11 +1,11 @@
 from django.urls import path
 
-from .views import GroupDetailView, PartyListView
+from .views import PartyDetailView, PartyListView
 
 app_name = 'party'
 urlpatterns = [
-    path('group/<int:pk>/', GroupDetailView.as_view(), name='group-detail'),
+    path('group/<int:pk>/', PartyDetailView.as_view(), name='detail'),
     # path('payment/<int:pk>/', PaymentDetailView.as_view(), name='payment-detail'),
 
-    path('', PartyListView.as_view(), name='groups'),
+    path('', PartyListView.as_view(), name='parties'),
 ]

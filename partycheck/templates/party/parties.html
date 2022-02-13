@@ -2,7 +2,7 @@
 {% extends 'page.html' %}
 {% load static %}
 
-{% block title %}Party{% endblock %}
+{% block title %}Список компаний{% endblock %}
 
 {% block main %}
     <div class="container">
@@ -21,7 +21,11 @@
           {% for party in party_list %}
             <tr>
               <th scope="row">{{ party.id }}</th>
-              <td>{{ party.name }}</td>
+              <td>
+                  <a href="{% url 'party:detail' party.id %}" class="text-decoration-none">
+                      {{ party.name }}
+                  </a>
+              </td>
               <td>{{ party.creator }}</td>
               <td>{{ party.members.count }}</td>
             </tr>
