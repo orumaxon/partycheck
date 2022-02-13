@@ -1,17 +1,18 @@
 from django.views import generic
 
-from party.models import PartyGroup
+from party.models import Party
 
 
 class GroupDetailView(generic.DetailView):
-    model = PartyGroup
-    template_name = 'core/group.html'
+    model = Party
+    template_name = 'party/group.html'
 
 
-# class PaymentDetailView(generic.DetailView):
-#     model = PartyGroup
-#     template_name = 'core/group.html'
+class PaymentDetailView(generic.DetailView):
+    model = Party
+    template_name = 'party/group.html'
+
 
 class PartyListView(generic.ListView):
-    model = PartyGroup
-    template_name = 'core/party.html'
+    model = Party
+    template_name = 'party/groups.html'
