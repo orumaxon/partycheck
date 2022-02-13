@@ -14,32 +14,36 @@
 
 {% block main_style %}w-100{% endblock %}
 {% block main %}
-  <div class="form-signin border">
-    <form>
+    <div class="form-signin">
 
-      <!-- <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-      <i class="bi bi-person-circle" style="font-size: 2rem"></i>
-      <h1 class="h3 mb-2 fw-normal">Регистрация в долговой яме</h1>
+        <form method="post" action="{% url 'account:signup' %}">
+            {% csrf_token %}
+            <a href="/" class="link-dark fw-bold">
+                <i class="bi bi-receipt" style="font-size: 4rem"></i>
+            </a>
+            <h1 class="h4 mb-2 fw-normal">Регистрация в долговой яме</h1>
 
-      <label for="inputEmail" class="visually-hidden">Ник</label>
-      <input type="email" id="inputEmail" class="form-control my-2" placeholder="Ник" required>
+            {% for field in form %}
+                {{ field }}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-      <label for="inputPassword" class="visually-hidden">Пароль</label>
-      <input type="password" id="inputPassword" class="form-control my-2" placeholder="Пароль" required>
+            {% for error in form.non_field_errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
 
-      <label for="inputPassword2" class="visually-hidden">Ещё раз пароль</label>
-      <input type="password" id="inputPassword2" class="form-control my-2" placeholder="Повторите пароль" required>
-      <!-- <div class="checkbox mb-3"> -->
-        <!-- <label> -->
-          <!-- <input type="checkbox" value="remember-me"> Remember me -->
-        <!-- </label> -->
-      <!-- </div> -->
       <button class="btn btn-lg btn-success w-100 my-2" type="submit">Зарегистрироваться</button>
-      <!-- <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p> -->
+
     </form>
   </div>
 
-  <div class="form-sign-info mt-5 border">
+  <div class="form-sign-info mt-5">
      <p class="login-callout mt-3">Уже есть аккаунт? <a href="{% url 'account:signin' %}">Войти</a></p>
   </div>
 {% endblock %}

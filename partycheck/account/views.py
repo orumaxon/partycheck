@@ -1,12 +1,13 @@
-from django.contrib.auth import views
+from django.contrib.auth import authenticate, login, views
+from django.shortcuts import redirect
 from django.views import generic
 
-from account.forms import SignInForms
+from account.forms import SignInForm, SignUpForm
 from account.models import User
 
 
 class SignInView(views.LoginView):
-    form_class = SignInForms
+    form_class = SignInForm
     redirect_authenticated_user = True
     template_name = 'account/signin.html'
 
@@ -14,8 +15,22 @@ class SignInView(views.LoginView):
         return '/'
 
 
-class SignUpView(generic.TemplateView):
+class SignUpView(generic.FormView):
+    form_class = SignUpForm
     template_name = 'account/signup.html'
+
+    def get_success_url(self):
+        return '/'
+
+    def form_valid(self, form):
+        form.save()
+        user = authenticate(
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password'],
+        )
+        if user is not None:
+            login(self.request, user)
+        return super().form_valid(form)
 
 
 class SingOutView(views.LogoutView):

@@ -28,7 +28,7 @@
 
             {% for error in form.non_field_errors %}
                 <div class="invalid-feedback">
-                    {{ error}}
+                    {{ error }}
                 </div>
             {% endfor %}
 
@@ -36,7 +36,7 @@
         </form>
     </div>
 
-    <div class="form-sign-info mt-5">
+    <div class="form-sign-info">
        <p class="login-callout mt-3">В первый раз? <a href="{% url 'account:signup' %}">Создать аккаунт</a></p>
     </div>
 {% endblock %}

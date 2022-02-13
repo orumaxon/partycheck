@@ -3,23 +3,21 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.core.exceptions import ValidationError
 
-from common.forms.mixin import DefaultAttrWidgetMixin
+from common.forms.fields import CurrentPasswordField, NewPasswordField
+from common.forms.mixins import DefaultAttrWidgetMixin
 
 UserModel = get_user_model()
 
 
-class SignInForms(AuthenticationForm, DefaultAttrWidgetMixin):
-    username = UsernameField(widget=forms.TextInput())
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}), strip=False)
+class SignInForm(DefaultAttrWidgetMixin, AuthenticationForm):
+    username = UsernameField()
+    password = CurrentPasswordField()
 
+    attrs_widget_model = UserModel
     error_messages = {
-        'invalid_login': 'Упс... Не верный ник или пароль.',
+        'invalid_login': 'Упс... Не верное имя пользователя или пароль.',
         'inactive': 'Данный аккаунт не активный',
     }
-
-    def __init__(self, request=None, *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
-        self.set_default_widget_attrs(self.fields, UserModel)
 
     def get_invalid_login_error(self):
         self.fields['username'].widget.attrs['class'] += ' is-invalid'
@@ -28,3 +26,46 @@ class SignInForms(AuthenticationForm, DefaultAttrWidgetMixin):
             self.error_messages['invalid_login'],
             code='invalid_login',
         )
+
+
+class SignUpForm(DefaultAttrWidgetMixin, forms.Form):
+    username = UsernameField()
+    password = NewPasswordField()
+    password_repeat = NewPasswordField(label='Повторите пароль')
+
+    attrs_widget_model = UserModel
+    error_messages = {
+        'password_mismatch': 'Упс... Введенные пароли не совпадают',
+        'username_already_exists': 'Упс... Данное имя уже занято ¯\\_(ツ)_/¯',
+    }
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username and UserModel.objects.filter(username=username).exists():
+            raise forms.ValidationError(
+                self.error_messages['username_already_exists'],
+                code='username_already_exists',
+            )
+        return username
+
+    def clean_password_repeat(self):
+        password = self.cleaned_data.get('password')
+        password_repeat = self.cleaned_data.get('password_repeat')
+        if password and password_repeat and password != password_repeat:
+            raise forms.ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch',
+            )
+        return password_repeat
+
+    def clean(self):
+        for error_field in self.errors:
+            self.fields[error_field].widget.attrs['class'] += ' is-invalid'
+        return super().clean()
+
+    def save(self):
+        user = UserModel.objects.create_user(
+            username=self.cleaned_data.get('username'),
+            password=self.cleaned_data.get('password'),
+        )
+        return user
