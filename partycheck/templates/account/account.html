@@ -5,13 +5,16 @@
 {% block title %}Аккаунт{% endblock %}
 
 {% block main %}
-    <p>{{ user }}</p>
+    <div class="container mt-4">
 
-    <p>Компании:</p>
-    {% for pg in user.party_groups.all %}
-        <p>
-            <a href="{% url 'party:group-detail' pg.id %}">{{ pg.name }}</a>
-        </p>
-    {% endfor %}
+        <p>{{ user }}</p>
 
+        <p>Компании:</p>
+        {% for pg in user.party_groups.all %}
+            <p>
+                <a href="{% url 'party:group-detail' pg.id %}">{{ pg.name }}</a>
+            </p>
+        {% endfor %}
+
+    </div>
 {% endblock %}
