@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, views
-from django.shortcuts import redirect
 from django.views import generic
 
 from account.forms import SignInForm, SignUpForm
