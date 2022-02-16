@@ -11,7 +11,7 @@ class PartyDetailView(generic.DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         object_id = kwargs['pk']
-        if object_id not in request.user.parties.values_list('id', flat=True):
+        if object_id not in request.user.members.values_list('id', flat=True):
             return redirect('party:parties')
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
 
