@@ -1,18 +1,21 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-  <div class="container-fluid text-center">
-    <a class="navbar-brand fw-bold" href="/">
-      <i class="bi bi-receipt"></i>
-      Party Check
-    </a>
+  <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="/">
+          <i class="bi bi-receipt"></i>
+          Party Check
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03"
+              aria-controls="navbarsExample03" aria-expanded="false" aria-label="Переключить навигацию">
+          <span class="navbar-toggler-icon"></span>
+      </button>
 
       <div class="navbar-collapse collapse" id="navbarsExample03">
 
           <ul class="navbar-nav me-auto">
-{#              <li class="nav-item">#}
-{#                  <a class="nav-link" aria-current="page" href="#">Что это ?</a>#}
-{#              </li>#}
+              <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="#">Что это ?</a>
+              </li>
           </ul>
-
 
 {#          <form>#}
 {#            <input class="form-control" type="text" placeholder="Поиск" aria-label="Search">#}
@@ -21,7 +24,7 @@
           <ul class="navbar-nav">
               {% if user.is_authenticated %}
 
-                  <li class="nav-item me-3">
+{#                  <li class="nav-item me-3">#}
 {#                      <a href="/notifications" class="nav-link link-dark">#}
 {#                          <i class="bi bi-bell" style="font-size: 1.2rem"></i>#}
 {#                          <span class="position-absolute translate-middle badge rounded-pill bg-danger">#}
@@ -29,24 +32,22 @@
 {#                            <span class="visually-hidden">непрочитанные сообщения</span>#}
 {#                          </span>#}
 {#                      </a>#}
-                  </li>
+{#                  </li>#}
 
-                  <li class="nav-item">
-                      <div class="dropdown">
-                          <a href="#" class="nav-link d-block link-dark text-decoration-none dropdown-toggle"
-                             id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                              {{ user.username }}
-                              <i class="bi bi-person-circle"></i>
+                  <li class="nav-item dropdown">
+                      <a href="#" class="nav-link d-block link-dark text-decoration-none dropdown-toggle"
+                         id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                          {{ user.username }}
+                          <i class="bi bi-person-circle"></i>
 {#                            <img src="https://github.com/mdo.png" alt="mdo" class="rounded-circle" width="32" height="32">#}
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownUser1"
-                              style="inset: auto 0px auto auto">
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownUser1"
+                          style="inset: auto 0px auto auto">
 {#                              <li><a class="dropdown-item" href="{% url 'account:detail' user.id %}">Профиль</a></li>#}
 {#                              <li><a class="dropdown-item" href="#">Настройки</a></li>#}
 {#                              <li><hr class="dropdown-divider"></li>#}
-                              <li><a class="dropdown-item" href="{% url 'account:signout' %}">Выйти</a></li>
-                          </ul>
-                        </div>
+                          <li><a class="dropdown-item" href="{% url 'account:signout' %}">Выйти</a></li>
+                      </ul>
                   </li>
 
               {% else %}
