@@ -12,4 +12,27 @@
 
 {% block body_style %}d-flex flex-column h-100{% endblock %}
 
+{% block main %}
+    <div class="container mt-4">
+
+        <div class="page-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="page-header-title">
+                    {% block page_title %}{% endblock %}
+                </h2>
+              </div>
+{#              <div class="col-auto">#}
+{#                <a class="btn btn-primary">#}
+{#                  <i class="bi-person-plus-fill me-1"></i>#}
+{#                    Пригласить#}
+{#                </a>#}
+{#              </div>#}
+            </div>
+        </div>
+
+        {% block page_main %}{% endblock %}
+    </div>
+{% endblock %}
+
 {% block footer_style %}my-auto{% endblock %}
