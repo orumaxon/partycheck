@@ -33,7 +33,7 @@ class Payment(CreatedAtMixin, models.Model):
     party = models.ForeignKey(
         Party, models.CASCADE, verbose_name='Компания/группа', related_name='payments')
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
-    investor = models.ForeignKey(
+    sponsor = models.ForeignKey(
         User, models.SET_NULL, verbose_name='Кто платил', null=True, related_name='payments')
     price = models.FloatField(verbose_name='Сумма расходов')
     debtors = models.ManyToManyField(
@@ -41,7 +41,7 @@ class Payment(CreatedAtMixin, models.Model):
     comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
 
     def __str__(self):
-        return f'#{self.id} Расход: {self.investor} на сумму {self.price}'
+        return f'#{self.id} Расход: {self.sponsor} на сумму {self.price}'
 
     def get_debt_value(self):
         return self.price // self.debtors.count()

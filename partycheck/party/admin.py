@@ -15,7 +15,7 @@ class PartyAdmin(admin.ModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'party', 'created_at']
     readonly_fields = ['created_at']
-    raw_id_fields = ['party', 'investor']
+    raw_id_fields = ['party', 'sponsor']
     filter_horizontal = ['debtors']
 
 

@@ -23,10 +23,10 @@
 
         <div class="row">
 
-            <div class="col">
+            <div class="col-12 col-md-6 table-responsive">
                 <table class="table table-hover caption-top">
                     <caption>Баланс участников</caption>
-                  <thead>
+                  <thead class="table-dark">
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Имя</th>
@@ -45,22 +45,28 @@
                 </table>
             </div>
 
-            <div class="col">
+            <div class="col-12 col-md-6 table-responsive">
                 <table class="table table-hover caption-top">
                     <caption>Список трат</caption>
-                  <thead>
+                  <thead class="table-dark">
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">Имя</th>
-                      <th scope="col">Трата</th>
+                      <th scope="col">Спонсор</th>
+                      <th scope="col">Коммент</th>
+                      <th scope="col">Сумма</th>
+                      <th scope="col">Должники</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for p in party.payments.all %}
                         <tr class="table-secondary">
                           <th scope="row">{{ p.id }}</th>
-                          <td>{{ p.investor }}</td>
+                          <td >{{ p.sponsor }}</td>
+                          <td>{{ p.comment }}</td>
                           <td>{{ p.price }}</td>
+                          <td class="w-25">
+                              {% for d in p.debtors.all %}@{{ d }} {% endfor %}
+                          </td>
                         </tr>
                     {% endfor %}
                   </tbody>
