@@ -13,6 +13,7 @@ class User(AbstractUser):
     def clean(self):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
+
     def get_debt_by_party(self, party):
         """Получить общий долг участника в компании"""
         sum_p = 0

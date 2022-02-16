@@ -23,33 +23,32 @@
 
         <div class="row">
             <table class="table table-striped table-hover">
-{#            <caption>Список групп/компаний</caption>#}
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Название</th>
-                <th scope="col">Создатель</th>
-                <th scope="col">Кол-во участников</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-          <tbody>
-          {% for party in party_list %}
-            <tr>
-              <th scope="row">{{ party.id }}</th>
-              <td>{{ party.name }}</td>
-              <td>{{ party.creator }}</td>
-              <td>{{ party.members.count }}</td>
-              <td class="text-end">
-                  <a href="{% url 'party:detail' party.id %}" class="btn btn-sm btn-outline-secondary">Открыть</a>
-{#                  <button type="button" class="btn btn-sm btn-outline-danger text-danger-hover">#}
-{#                      <i class="bi bi-trash"></i>#}
-{#                  </button>#}
-              </td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Создатель</th>
+                        <th scope="col">Кол-во участников</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                  <tbody>
+                      {% for party in party_list %}
+                        <tr>
+                          <th scope="row">{{ party.id }}</th>
+                          <td>{{ party.name }}</td>
+                          <td>{{ party.creator }}</td>
+                          <td>{{ party.members.count }}</td>
+                          <td class="text-end">
+                              <a href="{% url 'party:detail' party.id %}" class="btn btn-sm btn-outline-secondary">Открыть</a>
+            {#                  <button type="button" class="btn btn-sm btn-outline-danger text-danger-hover">#}
+            {#                      <i class="bi bi-trash"></i>#}
+            {#                  </button>#}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                  </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
