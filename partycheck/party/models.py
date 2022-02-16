@@ -17,36 +17,9 @@ class Party(CreatedAtMixin, models.Model):
     def __str__(self):
         return f'#{self.id} Компания: {self.name} ({self.members.count()})'
 
-    def get_debt_by_member(self, user: User):
-        """Получить общий долг должника компании"""
-        sum_p = 0
-        for pp in user.payments.filter(party=self):
-            sum_p += pp.price
-        # print(f'Потратил: {sum_p}')
-
-        sum_d = 0
-        for pd in user.debtors.filter(party=self):
-            sum_d += pd.get_debt_value()
-        # print(f'Должен: {sum_d}')
-
-        sum_st = 0
-        for pt in user.sender_transactions.filter(party=self):
-            sum_st += pt.value
-        # print(f'Отдал: {sum_st}')
-
-        sum_rt = 0
-        for pt in user.recipient_transactions.filter(party=self):
-            sum_rt += pt.value
-        # print(f'Получил: {sum_rt}')
-
-        sum_ = sum_p - sum_d + sum_st - sum_rt
-        # print(f'Итог: {sum_}')
-
-        return sum_
-
     def get_debt_by_members(self):
         debt_list = [
-            (member, self.get_debt_by_member(member))
+            (member, member.get_debt_by_party(self))
             for member in self.members.all()
         ]
         return debt_list

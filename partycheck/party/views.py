@@ -9,9 +9,9 @@ class PartyDetailView(generic.DetailView):
     template_name = 'party/party.html'
 
 
-class PaymentDetailView(generic.DetailView):
-    model = Party
-    template_name = 'party/party.html'
+# class PaymentDetailView(generic.DetailView):
+#     model = Party
+    # template_name = 'party/party.html'
 
 
 class PartyListView(generic.ListView):
