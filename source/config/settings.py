@@ -53,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 AUTH_USER_MODEL = 'account.User'
-ROOT_URLCONF = 'partycheck.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'partycheck.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
