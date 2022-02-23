@@ -9,7 +9,7 @@ from party.models import Party
 
 class PartyListView(generic.ListView):
     model = Party
-    template_name = 'party/parties.html'
+    template_name = 'party/list.html'
     ordering = 'id'
 
     def get_queryset(self):
@@ -21,7 +21,7 @@ class PartyListView(generic.ListView):
 
 class PartyDetailView(generic.DetailView):
     model = Party
-    template_name = 'party/party.html'
+    template_name = 'party/detail.html'
 
     def dispatch(self, request, *args, **kwargs):
         object_id = kwargs['pk']
@@ -33,7 +33,7 @@ class PartyDetailView(generic.DetailView):
 class PartyCreateView(generic.CreateView):
     model = Party
     form_class = PartyCreateForm
-    template_name = 'party/party_create.html'
+    template_name = 'party/create.html'
 
     def get_success_url(self):
         return '/'
