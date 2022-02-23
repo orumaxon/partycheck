@@ -1,8 +1,22 @@
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views import generic
 
+from party.forms import PartyCreateForm
 from party.models import Party
+
+
+class PartyListView(generic.ListView):
+    model = Party
+    template_name = 'party/parties.html'
+    ordering = 'id'
+
+    def get_queryset(self):
+        self.queryset = self.model.objects.filter(
+            Q(creator=self.request.user) | Q(members__in={self.request.user})
+        ).distinct()
+        return super().get_queryset()
 
 
 class PartyDetailView(generic.DetailView):
@@ -16,12 +30,15 @@ class PartyDetailView(generic.DetailView):
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
 
 
-class PartyListView(generic.ListView):
+class PartyCreateView(generic.CreateView):
     model = Party
-    template_name = 'party/parties.html'
+    form_class = PartyCreateForm
+    template_name = 'party/party_create.html'
 
-    def get_queryset(self):
-        self.queryset = self.model.objects.filter(
-            Q(creator=self.request.user) | Q(members__in={self.request.user})
-        ).distinct()
-        return super().get_queryset()
+    def get_success_url(self):
+        return '/'
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())

@@ -15,7 +15,6 @@
 {% block main_style %}w-100{% endblock %}
 {% block main %}
     <div class="form-signin">
-
         <form method="post" action="{% url 'account:signup' %}">
             {% csrf_token %}
             <a href="/" class="link-dark fw-bold">
@@ -38,9 +37,8 @@
                 </div>
             {% endfor %}
 
-      <button class="btn btn-lg btn-success w-100 my-2" type="submit">Зарегистрироваться</button>
-
-    </form>
+            <button class="btn btn-lg btn-success w-100 my-2" type="submit">Зарегистрироваться</button>
+        </form>
   </div>
 
   <div class="form-sign-info mt-5">

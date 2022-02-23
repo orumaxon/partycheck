@@ -5,6 +5,16 @@
 {% block title %}Список компаний{% endblock %}
 
 {% block page_title %}Компании/группы{% endblock %}
+
+{% block page_active %}
+    <div class="col-auto">
+        <a class="btn btn-primary" href="{% url 'party:create' %}">
+            <i class="bi bi-plus-square"></i>
+            Создать
+        </a>
+    </div>
+{% endblock %}
+
 {% block page_main %}
     <div class="row">
         <div class="col-lg-8 table-responsive">

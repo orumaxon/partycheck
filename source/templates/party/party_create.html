@@ -1,0 +1,35 @@
+<!doctype html>
+{% extends 'page.html' %}
+{% load static %}
+
+{% block title %}Добавление компании{% endblock %}
+
+{% block page_title %}Добавление компании{% endblock %}
+{% block page_main %}
+    <div class="row">
+        <div class="col-lg-8">
+
+            <form method="post" action="{% url 'party:create' %}">
+            {% csrf_token %}
+
+            {% for field in form %}
+                {{ field }}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+            <button class="btn btn-success" type="submit">Сохранить</button>
+        </form>
+
+        </div>
+    </div>
+{% endblock %}
