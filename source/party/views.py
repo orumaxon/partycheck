@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views import generic
 
-from party.forms import PartyCreateForm
-from party.models import Party
+from party.forms import PartyCreateForm, PaymentCreateForm
+from party.models import Party, Payment
 
 
 class PartyListView(generic.ListView):
@@ -40,5 +40,20 @@ class PartyCreateView(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class PaymentCreateView(generic.CreateView):
+    model = Payment
+    form_class = PaymentCreateForm
+    template_name = 'party/add_payment.html'
+
+    def get_success_url(self):
+        return '/'
+
+    def form_valid(self, form):
+        form.instance.sponsor = self.request.user
+        form.instance.party_id = 12
         form.save()
         return HttpResponseRedirect(self.get_success_url())
