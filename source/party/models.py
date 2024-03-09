@@ -53,8 +53,8 @@ class Payment(CreatedAtMixin, models.Model):
 
 class Transaction(CreatedAtMixin, models.Model):
     class Meta:
-        verbose_name = 'Денежный перевод между участниками компании'
-        verbose_name_plural = 'Денежные переводы между участниками компании'
+        verbose_name = 'Транзакция'
+        verbose_name_plural = 'Транзакции'
 
     party = models.ForeignKey(
         Party, models.CASCADE, verbose_name='Компания/группа', related_name='transactions')

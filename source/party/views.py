@@ -4,8 +4,10 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from party.forms import PartyCreateForm, PaymentCreateForm, PartyUpdateForm
-from party.models import Party, Payment
+from party.forms import (
+    PartyCreateForm, PaymentCreateForm, PartyUpdateForm, TransactionCreateForm
+)
+from party.models import Party, Payment, Transaction
 
 
 class PartyListView(generic.ListView):
@@ -67,8 +69,33 @@ class PaymentCreateView(generic.CreateView):
     def get_success_url(self):
         return reverse('party:detail', kwargs=self.kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['party_id'] = self.kwargs[self.pk_url_kwarg]
+        return context
+
     def form_valid(self, form):
         form.instance.sponsor = self.request.user
         form.instance.party_id = self.kwargs[self.pk_url_kwarg]
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class TransactionCreateView(generic.CreateView):
+    model = Transaction
+    form_class = TransactionCreateForm
+    template_name = 'party/add_transaction.html'
+
+    def get_success_url(self):
+        return reverse('party:detail', kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['party_id'] = self.kwargs[self.pk_url_kwarg]
+        return context
+
+    def form_valid(self, form):
+        form.instance.party_id = self.kwargs[self.pk_url_kwarg]
+        form.instance.sender = self.request.user
         form.save()
         return HttpResponseRedirect(self.get_success_url())
