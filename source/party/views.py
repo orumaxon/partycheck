@@ -28,7 +28,7 @@ class PartyDetailView(generic.DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         object_id = kwargs[self.pk_url_kwarg]
-        if object_id not in request.user.members.values_list('id', flat=True):
+        if object_id not in request.user.members_parties.values_list('id', flat=True):
             return redirect('party:list')
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
 
@@ -43,6 +43,7 @@ class PartyCreateView(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
+        form.full_clean()
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -57,8 +58,7 @@ class PartyUpdateView(generic.UpdateView):
 
     def form_valid(self, form):
         form.full_clean()
-        if form.is_valid():
-            form.save()
+        form.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -66,6 +66,13 @@ class PaymentCreateView(generic.CreateView):
     model = Payment
     form_class = PaymentCreateForm
     template_name = 'party/add_payment.html'
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update(dict(
+            party_id=self.kwargs[self.pk_url_kwarg],
+        ))
+        return form_kwargs
 
     def get_success_url(self):
         return reverse('party:detail', kwargs=self.kwargs)
@@ -78,19 +85,23 @@ class PaymentCreateView(generic.CreateView):
     def form_valid(self, form):
         form.instance.sponsor = self.request.user
         form.instance.party_id = self.kwargs[self.pk_url_kwarg]
+        form.full_clean()
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
 class TransactionCreateView(generic.CreateView):
     model = Transaction
+    form_class = TransactionCreateForm
     template_name = 'party/add_transaction.html'
 
-    def get_form(self, form_class=None):
-        return TransactionCreateForm(
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update(dict(
             user=self.request.user,
             party_id=self.kwargs[self.pk_url_kwarg],
-        )
+        ))
+        return form_kwargs
 
     def get_success_url(self):
         return reverse('party:detail', kwargs=self.kwargs)
@@ -103,5 +114,6 @@ class TransactionCreateView(generic.CreateView):
     def form_valid(self, form):
         form.instance.party_id = self.kwargs[self.pk_url_kwarg]
         form.instance.sender = self.request.user
+        form.full_clean()
         form.save()
         return HttpResponseRedirect(self.get_success_url())

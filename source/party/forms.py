@@ -24,6 +24,11 @@ class PaymentCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
         model = Payment
         fields = ['price', 'debtors', 'comment']
 
+    def __init__(self, party_id=None, **kwargs):
+        super().__init__(**kwargs)
+        users = User.objects.filter(members_parties__id=party_id)
+        self.fields['debtors'].queryset = users
+
 
 class TransactionCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
     attrs_widget_model = Transaction
@@ -34,5 +39,6 @@ class TransactionCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
 
     def __init__(self, user=None, party_id=None, **kwargs):
         super().__init__(**kwargs)
-        users = User.objects.filter(members__id=party_id).exclude(id=user.id)
+        users = User.objects.filter(members_parties__id=party_id).exclude(id=user.id)
         self.fields['recipient'].queryset = users
+        self.fields['recipient'].empty_label = None
