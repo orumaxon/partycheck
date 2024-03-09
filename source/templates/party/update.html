@@ -2,9 +2,14 @@
 {% extends 'page.html' %}
 {% load static %}
 
-{% block title %}Редактирование {{ party.name }}{% endblock %}
+{% block title %}Редактирование{% endblock %}
 
-{% block page_title %}Редактирование {{ party.name }}{% endblock %}
+{% block page_title %}
+<a class="btn btn-outline-dark" href="{% url 'party:detail' party.id %}">
+    <i class="bi bi-box-arrow-in-left"></i>
+</a>
+Редактирование: {{ party.name }}
+{% endblock %}
 {% block page_main %}
     <div class="row">
         <div class="col-lg-8">

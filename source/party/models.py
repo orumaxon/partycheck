@@ -18,11 +18,38 @@ class Party(CreatedAtMixin, models.Model):
         return f'#{self.id} Компания: {self.name} ({self.members.count()})'
 
     def get_debt_by_members(self):
-        debt_list = [
-            (member, member.get_debt_by_party(self))
-            for member in self.members.all()
-        ]
-        return debt_list
+        # debt_list = [
+        #     (member, member.get_debt_by_party(self))
+        #     for member in self.members.all()
+        # ]
+        debt_list_ = []
+
+        # ToDo: оптимизировать запросы
+        for member in self.members.all():
+
+            sum_p = member.payments.filter(party=self.id).\
+                aggregate(models.Sum('price'))['price__sum'] or 0
+            # print(f'Потратил: {sum_p}')
+
+            sum_d = sum((
+                pd.get_debt_value()
+                for pd in member.debtors.filter(party=self.id)
+            )) or 0
+            # print(f'Должен: {sum_d}')
+
+            sum_st = member.sender_transactions.filter(party=self.id).\
+                aggregate(models.Sum('value'))['value__sum'] or 0
+            # print(f'Отдал: {sum_st}')
+
+            sum_rt = member.recipient_transactions.filter(party=self.id).\
+                aggregate(models.Sum('value'))['value__sum'] or 0
+            # print(f'Получил: {sum_rt}')
+
+            sum_ = sum_p - sum_d + sum_st - sum_rt
+            debt_list_.append((member, sum_))
+            # print(f'Итог: {sum_}')
+
+        return debt_list_
 
 
 class Payment(CreatedAtMixin, models.Model):
@@ -43,8 +70,9 @@ class Payment(CreatedAtMixin, models.Model):
     def __str__(self):
         return f'#{self.id} Расход: {self.sponsor} на сумму {self.price}'
 
-    def get_debt_value(self):
-        return self.price // self.debtors.count()
+    def get_debt_value(self, debts_count=None):
+        debts_count = debts_count or self.debtors.count()
+        return self.price // debts_count
 
     def get_ost_value(self):
         debt = self.get_debt_value()
