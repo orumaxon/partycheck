@@ -56,8 +56,9 @@ class PartyUpdateView(generic.UpdateView):
         return reverse('party:detail', kwargs=self.kwargs)
 
     def form_valid(self, form):
-        form.is_valid()
-        form.save()
+        form.full_clean()
+        if form.is_valid():
+            form.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -83,8 +84,13 @@ class PaymentCreateView(generic.CreateView):
 
 class TransactionCreateView(generic.CreateView):
     model = Transaction
-    form_class = TransactionCreateForm
     template_name = 'party/add_transaction.html'
+
+    def get_form(self, form_class=None):
+        return TransactionCreateForm(
+            user=self.request.user,
+            party_id=self.kwargs[self.pk_url_kwarg],
+        )
 
     def get_success_url(self):
         return reverse('party:detail', kwargs=self.kwargs)
