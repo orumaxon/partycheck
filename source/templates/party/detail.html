@@ -2,9 +2,14 @@
 {% extends 'page.html' %}
 {% load static %}
 
-{% block title %}Компания{% endblock %}
+{% block title %}{{ party.name }}{% endblock %}
 
-{% block page_title %}{{ party.name }}{% endblock %}
+{% block page_title %}
+<a class="btn btn-outline-dark" href="{% url 'party:list' %}">
+    <i class="bi bi-box-arrow-in-left"></i>
+</a>
+{{ party.name }}
+{% endblock %}
 
 {% block page_active %}
     <div class="col-auto">

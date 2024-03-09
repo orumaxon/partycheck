@@ -24,7 +24,7 @@ class HomeView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('party:parties')
+            return redirect('party:list')
         return super().dispatch(request, *args, **kwargs)
 
 
