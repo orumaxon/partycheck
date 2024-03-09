@@ -13,6 +13,10 @@
 
 {% block page_active %}
     <div class="col-auto">
+        <a class="btn btn-primary" href="{% url 'party:update' party.id %}">
+            <i class="bi bi-plus-square"></i>
+            Редактировать
+        </a>
         <a class="btn btn-primary" href="{% url 'party:add_payment' party.id %}">
             <i class="bi bi-plus-square"></i>
             Добавить трату

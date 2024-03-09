@@ -12,6 +12,10 @@ class PartyCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
         fields = ['name', 'members']
 
 
+class PartyUpdateForm(PartyCreateForm):
+    pass
+
+
 class PaymentCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
     attrs_widget_model = Party
 

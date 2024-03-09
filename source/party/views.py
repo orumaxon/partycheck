@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from party.forms import PartyCreateForm, PaymentCreateForm
+from party.forms import PartyCreateForm, PaymentCreateForm, PartyUpdateForm
 from party.models import Party, Payment
 
 
@@ -41,6 +41,20 @@ class PartyCreateView(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class PartyUpdateView(generic.UpdateView):
+    model = Party
+    form_class = PartyUpdateForm
+    template_name = 'party/update.html'
+
+    def get_success_url(self):
+        return reverse('party:detail', kwargs=self.kwargs)
+
+    def form_valid(self, form):
+        form.is_valid()
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
