@@ -69,9 +69,7 @@ class PaymentCreateView(generic.CreateView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs.update(dict(
-            party_id=self.kwargs[self.pk_url_kwarg],
-        ))
+        form_kwargs.update(dict(party_id=self.kwargs[self.pk_url_kwarg]))
         return form_kwargs
 
     def get_success_url(self):

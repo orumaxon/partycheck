@@ -12,6 +12,11 @@ class PartyCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
         model = Party
         fields = ['name', 'members']
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        users = User.objects.exclude(is_superuser=True)
+        self.fields['members'].queryset = users
+
 
 class PartyUpdateForm(PartyCreateForm):
     pass

@@ -94,4 +94,4 @@ class Transaction(CreatedAtMixin, models.Model):
     comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
 
     def __str__(self):
-        return f'#{self.id} Перевод: {self.sender} - {self.recipient} ({self.value})'
+        return f'#{self.id} Перевод: {self.sender} -> {self.recipient}: {self.value}'
