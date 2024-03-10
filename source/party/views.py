@@ -4,13 +4,14 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from party.forms import (
+from .forms import (
     PartyCreateForm, PaymentCreateForm, PartyUpdateForm, TransactionCreateForm
 )
-from party.models import Party, Payment, Transaction
+from .models import Party, Payment, Transaction
+from common.views.mixins import SigninRequiredMixin
 
 
-class PartyListView(generic.ListView):
+class PartyListView(SigninRequiredMixin, generic.ListView):
     model = Party
     template_name = 'party/list.html'
     ordering = 'id'
@@ -22,7 +23,7 @@ class PartyListView(generic.ListView):
         return super().get_queryset()
 
 
-class PartyDetailView(generic.DetailView):
+class PartyDetailView(SigninRequiredMixin, generic.DetailView):
     model = Party
     template_name = 'party/detail.html'
 
@@ -33,7 +34,7 @@ class PartyDetailView(generic.DetailView):
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
 
 
-class PartyCreateView(generic.CreateView):
+class PartyCreateView(SigninRequiredMixin, generic.CreateView):
     model = Party
     form_class = PartyCreateForm
     template_name = 'party/create.html'
@@ -48,7 +49,7 @@ class PartyCreateView(generic.CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PartyUpdateView(generic.UpdateView):
+class PartyUpdateView(SigninRequiredMixin, generic.UpdateView):
     model = Party
     form_class = PartyUpdateForm
     template_name = 'party/update.html'
@@ -62,7 +63,7 @@ class PartyUpdateView(generic.UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PaymentCreateView(generic.CreateView):
+class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
     model = Payment
     form_class = PaymentCreateForm
     template_name = 'party/add_payment.html'
@@ -88,7 +89,7 @@ class PaymentCreateView(generic.CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class TransactionCreateView(generic.CreateView):
+class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
     model = Transaction
     form_class = TransactionCreateForm
     template_name = 'party/add_transaction.html'

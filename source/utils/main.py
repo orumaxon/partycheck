@@ -15,14 +15,15 @@ dolg_dict = {
 }
 
 # -------- Оплата -------
-dolg_dict[M] = 700
-# dolg_dict[D] = 150
+dolg_dict[M] = 900
+dolg_dict[D] = 300
 
 # -------- Подсчет долгов --------
 
 pay_list = [
-    # (150, [A]),
-    (700, __all__),
+    (150, [A]),
+    (150, [M]),
+    (900, __all__),
 ]
 
 
@@ -38,7 +39,8 @@ for money, people_list in pay_list:
 
 transact_list = [
     # (D, M, 50),
-    # (A, M, 300),
+    (A, M, 300),
+    (A, M, 150),
 ]
 
 for sender, recipient, money in transact_list:

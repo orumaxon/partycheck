@@ -15,13 +15,9 @@ class Party(CreatedAtMixin, models.Model):
     members = models.ManyToManyField(User, verbose_name='Участники', blank=True, related_name='members_parties')
 
     def __str__(self):
-        return f'#{self.id} Компания: {self.name})'
+        return f'#{self.id} Компания: {self.name}'
 
     def get_debt_by_members(self):
-        # debt_list = [
-        #     (member, member.get_debt_by_party(self))
-        #     for member in self.members.all()
-        # ]
         debt_list_ = []
 
         # ToDo: оптимизировать запросы

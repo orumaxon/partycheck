@@ -12,29 +12,28 @@ class User(AbstractUser):
     def clean(self):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
-    def get_debt_by_party(self, party):
-        """Получить общий долг участника в компании"""
+    def get_full_balance(self):
+        print(self.id, self.username)
+
         sum_p = 0
-        for pp in self.payments.filter(party=party):
+        sum_pdata = dict()
+        for pp in self.sponsor_payments.all():
             sum_p += pp.price
-        # print(f'Потратил: {sum_p}')
+            for debtor in pp.debtors.exclude(id=self.id):
+                sum_pdata[debtor.id] = sum_pdata.get(debtor.id, 0) + pp.get_debt_value()
+
+        print(f'Потратил всего: {sum_p}')
+        print(f'Кто должен: {sum_pdata}')
 
         sum_d = 0
-        for pd in self.debtors.filter(party=party):
+        sum_ddata = dict()
+        for pd in self.debtors_payments.exclude(sponsor__id=self.id):
             sum_d += pd.get_debt_value()
-        # print(f'Должен: {sum_d}')
+            sum_ddata[pd.sponsor.id] = pd.get_debt_value()
+            # for debtor in pp.debtors.exclude(id=self.id):
+            #     sum_pdata[debtor.id] = sum_pdata.get(debtor.id, 0) + pp.get_debt_value()
 
-        sum_st = 0
-        for pt in self.sender_transactions.filter(party=party):
-            sum_st += pt.value
-        # print(f'Отдал: {sum_st}')
+        print(f'Сам должен всего: {sum_d}')
+        print(f'Кому должен: {sum_ddata}')
 
-        sum_rt = 0
-        for pt in self.recipient_transactions.filter(party=party):
-            sum_rt += pt.value
-        # print(f'Получил: {sum_rt}')
-
-        sum_ = sum_p - sum_d + sum_st - sum_rt
-        # print(f'Итог: {sum_}')
-
-        return sum_
+        return []

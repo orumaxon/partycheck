@@ -1,25 +1,21 @@
 from django.contrib.auth import authenticate, login, views
 from django.views import generic
 
-from account.forms import SignInForm, SignUpForm
-from account.models import User
+from .forms import SignInForm, SignUpForm
+from .models import User
 
 
 class SignInView(views.LoginView):
     form_class = SignInForm
-    redirect_authenticated_user = True
     template_name = 'account/signin.html'
-
-    def get_success_url(self):
-        return '/'
+    redirect_authenticated_user = True
+    next_page = '/'
 
 
 class SignUpView(generic.FormView):
     form_class = SignUpForm
     template_name = 'account/signup.html'
-
-    def get_success_url(self):
-        return '/'
+    next_page = '/'
 
     def form_valid(self, form):
         form.save()
