@@ -61,7 +61,7 @@ class Payment(CreatedAtMixin, models.Model):
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
     sponsor = models.ForeignKey(
         User, models.PROTECT, verbose_name='Кто платил', related_name='sponsor_payments')
-    price = models.FloatField(verbose_name='Сумма расходов')
+    price = models.FloatField(verbose_name='Сумма расхода')
     py_debtors = models.ManyToManyField(
         User, verbose_name='На кого делить расходы', related_name='debtors_payments')
     comment = models.CharField(verbose_name='Комментарий', max_length=300, blank=True, null=True)
