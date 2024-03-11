@@ -69,11 +69,6 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
     form_class = PaymentCreateForm
     template_name = 'party/add_payment.html'
 
-    def get_form_kwargs(self):
-        form_kwargs = super().get_form_kwargs()
-        form_kwargs.update(dict(party_id=self.kwargs[self.pk_url_kwarg]))
-        return form_kwargs
-
     def get_success_url(self):
         return reverse('party:detail', kwargs=self.kwargs)
 
@@ -86,7 +81,22 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
         form.instance.sponsor = self.request.user
         form.instance.party_id = self.kwargs[self.pk_url_kwarg]
         form.full_clean()
-        form.save()
+        self.object = form.save()
+
+        on_all = form.cleaned_data.get('on_all')
+        if on_all:
+            members_count = self.object.party.members.count()
+            debt_price = self.object.price // members_count
+            debts = [
+                Debt(
+                    payment=self.object,
+                    debtor=member,
+                    price=debt_price,
+                )
+                for member in self.object.party.members.all()
+            ]
+            Debt.objects.bulk_create(debts)
+
         return HttpResponseRedirect(self.get_success_url())
 
 

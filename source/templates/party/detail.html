@@ -49,7 +49,7 @@
 
                   <tbody>
                     {% for p in party.payments.all %}
-                        <tr>
+                        <tr class="table-secondary">
                           <th scope="row">{{ p.id }}</th>
                           <td >{{ p.sponsor }}</td>
                           <td>{{ p.comment|default:"" }}</td>
@@ -68,7 +68,7 @@
                             <tr>
                                 <td colspan="6">
                                     <table class="table table-hover table-sm mb-0">
-                                        <thead class="table-secondary">
+                                        <thead class="table-light">
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Должник</th>
