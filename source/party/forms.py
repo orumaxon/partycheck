@@ -1,7 +1,7 @@
 from django import forms
 
 from common.forms.mixins import DefaultAttrWidgetMixin
-from party.models import Party, Payment, Transaction
+from .models import Debt, Party, Payment, Transaction
 from account.models import User
 
 
@@ -27,12 +27,25 @@ class PaymentCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
 
     class Meta:
         model = Payment
-        fields = ['price', 'debtors', 'comment']
+        fields = ['price', 'py_debtors', 'comment']
 
     def __init__(self, party_id=None, **kwargs):
         super().__init__(**kwargs)
         users = User.objects.filter(members_parties__id=party_id)
-        self.fields['debtors'].queryset = users
+        self.fields['py_debtors'].queryset = users
+
+
+class DebtCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):
+    attrs_widget_model = Debt
+
+    class Meta:
+        model = Debt
+        fields = ['debtor', 'price', 'comment']
+
+    def __init__(self, party_id=None, **kwargs):
+        super().__init__(**kwargs)
+        users = User.objects.filter(members_parties__id=party_id)
+        self.fields['debtor'].queryset = users
 
 
 class TransactionCreateForm(DefaultAttrWidgetMixin, forms.ModelForm):

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import (
-    PartyDetailView, PartyListView, PartyCreateView,
+    DebtCreateView, PartyDetailView, PartyListView, PartyCreateView,
     PaymentCreateView, PartyUpdateView, TransactionCreateView
 )
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('<int:pk>/update/', PartyUpdateView.as_view(), name='update'),
     path('<int:pk>/add-payment/', PaymentCreateView.as_view(), name='add_payment'),
     path('<int:pk>/add-transaction/', TransactionCreateView.as_view(), name='add_transaction'),
+    path('<int:pk>/payment/<int:payment_id>/add-debt/', DebtCreateView.as_view(), name='add_payment_debt'),
 ]

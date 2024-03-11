@@ -19,7 +19,7 @@ class User(AbstractUser):
         sum_pdata = dict()
         for pp in self.sponsor_payments.all():
             sum_p += pp.price
-            for debtor in pp.debtors.exclude(id=self.id):
+            for debtor in pp.py_debtors.exclude(id=self.id):
                 sum_pdata[debtor.id] = sum_pdata.get(debtor.id, 0) + pp.get_debt_value()
 
         print(f'Потратил всего: {sum_p}')
@@ -30,8 +30,6 @@ class User(AbstractUser):
         for pd in self.debtors_payments.exclude(sponsor__id=self.id):
             sum_d += pd.get_debt_value()
             sum_ddata[pd.sponsor.id] = pd.get_debt_value()
-            # for debtor in pp.debtors.exclude(id=self.id):
-            #     sum_pdata[debtor.id] = sum_pdata.get(debtor.id, 0) + pp.get_debt_value()
 
         print(f'Сам должен всего: {sum_d}')
         print(f'Кому должен: {sum_ddata}')

@@ -53,19 +53,19 @@ class PartyListViewTestCase(TestCase):
             sponsor=self.user1,
             price=1300,
         )
-        a1.debtors.add(self.user1)
+        a1.py_debtors.add(self.user1)
         a2 = Payment.objects.create(
             party=party1,
             sponsor=self.user1,
             price=300,
         )
-        a2.debtors.add(self.user2)
+        a2.py_debtors.add(self.user2)
         a3 = Payment.objects.create(
             party=party1,
             sponsor=self.user1,
             price=400,
         )
-        a3.debtors.add(self.user3)
+        a3.py_debtors.add(self.user3)
 
         party2 = create_party(**dict(
             name='Party-2',
@@ -77,19 +77,19 @@ class PartyListViewTestCase(TestCase):
             sponsor=self.user2,
             price=300,
         )
-        b1.debtors.add(self.user2)
+        b1.py_debtors.add(self.user2)
         b2 = Payment.objects.create(
             party=party2,
             sponsor=self.user2,
             price=500,
         )
-        b2.debtors.add(self.user1)
+        b2.py_debtors.add(self.user1)
         b3 = Payment.objects.create(
             party=party2,
             sponsor=self.user2,
             price=200,
         )
-        b3.debtors.add(self.user3)
+        b3.py_debtors.add(self.user3)
 
         self.user1.get_full_balance()
         print('-----')

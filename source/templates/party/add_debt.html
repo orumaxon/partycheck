@@ -1,0 +1,42 @@
+<!doctype html>
+{% extends 'page.html' %}
+{% load static %}
+
+{% block title %}Добавить долг по чеку{% endblock %}
+
+{% block page_title %}
+<a class="btn btn-outline-dark" href="{% url 'party:detail' party_id %}">
+    <i class="bi bi-box-arrow-in-left"></i>
+</a>
+Добавить долг по чеку
+{% endblock %}
+
+{% block page_main %}
+    <div class="row">
+        <div class="col-lg-8">
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    {{ field.label }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+                <button class="btn btn-success" type="submit">Сохранить</button>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

@@ -5,9 +5,10 @@ from django.urls import reverse
 from django.views import generic
 
 from .forms import (
-    PartyCreateForm, PaymentCreateForm, PartyUpdateForm, TransactionCreateForm
+    DebtCreateForm, PartyCreateForm, PaymentCreateForm,
+    PartyUpdateForm, TransactionCreateForm,
 )
-from .models import Party, Payment, Transaction
+from .models import Party, Payment, Transaction, Debt
 from common.views.mixins import SigninRequiredMixin
 
 
@@ -84,6 +85,33 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         form.instance.sponsor = self.request.user
         form.instance.party_id = self.kwargs[self.pk_url_kwarg]
+        form.full_clean()
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class DebtCreateView(SigninRequiredMixin, generic.CreateView):
+    model = Debt
+    form_class = DebtCreateForm
+    template_name = 'party/add_debt.html'
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update(dict(party_id=self.kwargs[self.pk_url_kwarg]))
+        return form_kwargs
+
+    def get_success_url(self):
+        self.kwargs.pop('payment_id')
+        return reverse('party:detail', kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['party_id'] = self.kwargs[self.pk_url_kwarg]
+        return context
+
+    def form_valid(self, form):
+        form.instance.payment_id = self.kwargs['payment_id']
+        form.instance.debtor = self.request.user
         form.full_clean()
         form.save()
         return HttpResponseRedirect(self.get_success_url())

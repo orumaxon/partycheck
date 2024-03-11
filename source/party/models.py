@@ -6,8 +6,8 @@ from common.models.mixins import CreatedAtMixin
 
 class Party(CreatedAtMixin, models.Model):
     class Meta:
-        verbose_name = 'Компания/группа'
-        verbose_name_plural = 'Компании/группы'
+        verbose_name = 'Компания'
+        verbose_name_plural = 'Компании'
 
     name = models.CharField(verbose_name='Наименование', max_length=150)
     creator = models.ForeignKey(
@@ -27,10 +27,13 @@ class Party(CreatedAtMixin, models.Model):
                 aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Потратил: {sum_p}')
 
-            sum_d = sum((
-                pd.get_debt_value()
-                for pd in member.debtors_payments.filter(party=self.id)
-            )) or 0
+            # sum_d = sum((
+            #     pd.get_debt_value()
+            #     for pd in member.debtors_payments.filter(party=self.id)
+            # )) or 0
+
+            sum_d = member.debtors.filter(payment__party_id=self.id).\
+                aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Должен: {sum_d}')
 
             sum_st = member.sender_transactions.filter(party=self.id).\
@@ -50,29 +53,45 @@ class Party(CreatedAtMixin, models.Model):
 
 class Payment(CreatedAtMixin, models.Model):
     class Meta:
-        verbose_name = 'Расход на компанию'
-        verbose_name_plural = 'Расходы на компанию'
+        verbose_name = 'Расход в компании'
+        verbose_name_plural = 'Расходы в компании'
 
     party = models.ForeignKey(
-        Party, models.CASCADE, verbose_name='Компания/группа', related_name='payments')
+        Party, models.CASCADE, verbose_name='Компания', related_name='payments')
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
     sponsor = models.ForeignKey(
         User, models.PROTECT, verbose_name='Кто платил', related_name='sponsor_payments')
     price = models.FloatField(verbose_name='Сумма расходов')
-    debtors = models.ManyToManyField(
+    py_debtors = models.ManyToManyField(
         User, verbose_name='На кого делить расходы', related_name='debtors_payments')
-    comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
+    comment = models.CharField(verbose_name='Комментарий', max_length=300, blank=True, null=True)
 
     def __str__(self):
         return f'#{self.id} Расход: {self.sponsor} на сумму {self.price}'
 
     def get_debt_value(self, debts_count=None):
-        debts_count = debts_count or self.debtors.count()
+        debts_count = debts_count or self.py_debtors.count()
         return self.price // debts_count
 
-    def get_ost_value(self):
-        debt = self.get_debt_value()
-        return self.price - debt * self.debtors.count()
+    def get_unknown_debt_price(self):
+        known_debt = self.debts.aggregate(models.Sum('price'))['price__sum'] or 0
+        return self.price - known_debt
+
+
+class Debt(models.Model):
+    class Meta:
+        verbose_name = 'Долг'
+        verbose_name_plural = 'Долги'
+
+    payment = models.ForeignKey(
+        Payment, models.CASCADE, verbose_name='Расход', related_name='debts')
+    debtor = models.ForeignKey(
+        User, models.PROTECT, verbose_name='Должник', related_name='debtors')
+    price = models.FloatField(verbose_name='Сумма')
+    comment = models.CharField(verbose_name='Комментарий', max_length=300, blank=True, null=True)
+
+    def __str__(self):
+        return f'#{self.id} {self.debtor} должен {self.price} в Расходе #{self.payment_id}'
 
 
 class Transaction(CreatedAtMixin, models.Model):

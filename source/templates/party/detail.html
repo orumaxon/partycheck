@@ -16,98 +16,131 @@
         {% if party.creator_id == user.id %}
             <a class="btn btn-outline-primary" href="{% url 'party:update' party.id %}">
                 <i class="bi bi-pencil-square"></i>
-                Редактировать
+                Редактировать компанию
             </a>
         {% endif %}
         <a class="btn btn-outline-success" href="{% url 'party:add_transaction' party.id %}">
             <i class="bi bi-plus-square"></i>
-            Добавить перевод
+            Добавить транзакцию (перевод)
         </a>
         <a class="btn btn-outline-success" href="{% url 'party:add_payment' party.id %}">
             <i class="bi bi-plus-square"></i>
-            Добавить расход
+            Добавить расход (чек)
         </a>
     </div>
 {% endblock %}
 
 {% block page_main %}
     <div class="row">
-        <div class="col">
-                <div class="col-12 table-responsive">
-                        <table class="table table-hover caption-top">
-                            <caption>Баланс участников</caption>
-                          <thead class="table-dark">
+        <div class="col-lg-7">
+            <div class="table-responsive">
+                <table class="table table-hover caption-top">
+                    <caption>Расходы (чеки)</caption>
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Спонсор</th>
+                      <th scope="col">Коммент</th>
+                      <th scope="col">Сумма</th>
+                      <th scope="col">Остаток</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% for p in party.payments.all %}
+                        <tr>
+                          <th scope="row">{{ p.id }}</th>
+                          <td >{{ p.sponsor }}</td>
+                          <td>{{ p.comment|default:"" }}</td>
+                          <td>{{ p.price }}</td>
+                          <td class="col-1">{{ p.get_unknown_debt_price }}</td>
+                          <td class="text-end">
+                              <a href="{% url 'party:add_payment_debt' party.id p.id %}"
+                                 class="btn btn-sm btn-outline-secondary">
+                                  <i class="bi bi-plus-square"></i>
+                                  Раскидать
+                              </a>
+                          </td>
+                        </tr>
+
+                          {% if p.debts.count %}
                             <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Имя</th>
-                              <th scope="col">Баланс</th>
+                                <td colspan="6">
+                                    <table class="table table-hover table-sm mb-0">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Должник</th>
+                                                <th scope="col">Сумма из чека</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for d in p.debts.all %}
+                                            <tr>
+                                                <th scope="row">></th>
+                                                <td>{{ d.debtor }}</td>
+                                                <td>{{ d.price }}</td>
+                                            </tr>
+                                          </tbody>
+                                        {% endfor %}
+                                    </table>
+                                </td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {% for m, value in party.get_debt_by_members %}
-                                <tr class="{% if value < 0 %}table-danger{% else %}table-success{% endif %}">
-                                  <th scope="row">{{ m.id }}</th>
-                                  <td>{{ m }}</td>
-                                  <td>{{ value }}</td>
-                                </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                </div>
-                <div class="col-12 table-responsive">
-                        <table class="table table-hover caption-top">
-                            <caption>Транзакции</caption>
-                          <thead class="table-dark">
-                            <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Кто</th>
-                              <th scope="col">Кому</th>
-                              <th scope="col">Коммент</th>
-                              <th scope="col">Сумма</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for t in party.transactions.all %}
-                                <tr class="table-info">
-                                  <th scope="row">{{ t.id }}</th>
-                                  <td >{{ t.sender }}</td>
-                                  <td>{{ t.recipient }}</td>
-                                  <td>{{ t.comment|default:"" }}</td>
-                                  <td>{{ t.value }}</td>
-                                </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
+                        {% endif %}
+
+                    {% endfor %}
+                  </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="col">
-            <div class="col-12 table-responsive">
-                    <table class="table table-hover caption-top">
-                        <caption>Расходы</caption>
-                      <thead class="table-dark">
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Спонсор</th>
-                          <th scope="col">Коммент</th>
-                          <th scope="col">Сумма</th>
-                          <th scope="col">Должники</th>
+        <div class="col-lg-5">
+            <div class="table-responsive">
+                <table class="table table-hover caption-top">
+                    <caption>Итого</caption>
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Имя</th>
+                      <th scope="col">Баланс</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for m, value in party.get_debt_by_members %}
+                        <tr class="{% if value < 0 %}table-danger{% else %}table-success{% endif %}">
+                          <th scope="row">{{ m.id }}</th>
+                          <td>{{ m }}</td>
+                          <td>{{ value }}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {% for p in party.payments.all %}
-                            <tr class="table-secondary">
-                              <th scope="row">{{ p.id }}</th>
-                              <td >{{ p.sponsor }}</td>
-                              <td>{{ p.comment|default:"" }}</td>
-                              <td>{{ p.price }}</td>
-                              <td class="w-25">
-                                  {% for d in p.debtors.all %}{{ d }} {% endfor %}
-                              </td>
-                            </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover caption-top">
+                    <caption>Транзакции (переводы)</caption>
+                  <thead class="table-dark">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Кто</th>
+                      <th scope="col">Кому</th>
+                      <th scope="col">Коммент</th>
+                      <th scope="col">Сумма</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for t in party.transactions.all %}
+                        <tr class="table-info">
+                          <th scope="row">{{ t.id }}</th>
+                          <td >{{ t.sender }}</td>
+                          <td>{{ t.recipient }}</td>
+                          <td>{{ t.comment|default:"" }}</td>
+                          <td>{{ t.value }}</td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
             </div>
         </div>
     </div>
