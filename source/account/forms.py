@@ -13,11 +13,13 @@ class SignInForm(DefaultAttrWidgetMixin, AuthenticationForm):
     username = UsernameField()
     password = CurrentPasswordField()
 
-    attrs_widget_model = UserModel
     error_messages = {
         'invalid_login': 'Упс... Не верное имя пользователя или пароль.',
         'inactive': 'Данный аккаунт не активный',
     }
+
+    class Meta:
+        model = UserModel
 
     def get_invalid_login_error(self):
         self.fields['username'].widget.attrs['class'] += ' is-invalid'
@@ -38,6 +40,9 @@ class SignUpForm(DefaultAttrWidgetMixin, forms.Form):
         'password_mismatch': 'Упс... Введенные пароли не совпадают',
         'username_already_exists': 'Упс... Данное имя уже занято ¯\\_(ツ)_/¯',
     }
+
+    class Meta:
+        model = UserModel
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
