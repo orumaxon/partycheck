@@ -15,7 +15,7 @@ class SignInView(views.LoginView):
 class SignUpView(generic.FormView):
     form_class = SignUpForm
     template_name = 'account/signup.html'
-    next_page = '/'
+    success_url = '/'
 
     def form_valid(self, form):
         form.save()

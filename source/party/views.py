@@ -127,6 +127,20 @@ class DebtCreateView(SigninRequiredMixin, generic.CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class DebtSendView(SigninRequiredMixin, generic.View):
+    def get(self, request, **kwargs):
+        debt_id = self.kwargs.pop('debt_id')
+        debt = Debt.objects.get(id=debt_id)
+        Transaction.objects.create(
+            party=debt.payment.party,
+            sender=debt.debtor,
+            recipient=debt.payment.sponsor,
+            value=debt.price,
+        )
+        url = reverse('party:detail', kwargs=self.kwargs)
+        return HttpResponseRedirect(url)
+
+
 class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
     model = Transaction
     form_class = TransactionCreateForm

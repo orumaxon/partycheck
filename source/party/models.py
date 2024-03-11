@@ -17,6 +17,27 @@ class Party(CreatedAtMixin, models.Model):
     def __str__(self):
         return f'#{self.id} Компания: {self.name}'
 
+    def get_debts(self):
+        debts_data = dict()
+
+        for member in self.members.all():
+            sum_d = 0
+
+            for debt in member.debts.filter(payment__party_id=self.id).exclude(payment__sponsor_id=member.id):
+                sum_d += debt.price
+                key = (member, debt.payment.sponsor)
+                debts_data[key] = debts_data.get(key, 0) + debt.price
+
+            for transaction in member.sender_transactions.filter(party=self.id):
+                sum_d -= transaction.value
+                key = (member, transaction.recipient)
+                debts_data[key] = debts_data.get(key, 0) - transaction.value
+
+            # print(f'Сам должен всего: {sum_d}')
+            # print(f'Кому должен: {debts_data}')
+
+        return debts_data
+
     def get_debt_by_members(self):
         debt_list_ = []
 
@@ -27,12 +48,7 @@ class Party(CreatedAtMixin, models.Model):
                 aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Потратил: {sum_p}')
 
-            # sum_d = sum((
-            #     pd.get_debt_value()
-            #     for pd in member.debtors_payments.filter(party=self.id)
-            # )) or 0
-
-            sum_d = member.debtors.filter(payment__party_id=self.id).\
+            sum_d = member.debts.filter(payment__party_id=self.id).\
                 aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Должен: {sum_d}')
 
@@ -69,9 +85,8 @@ class Payment(CreatedAtMixin, models.Model):
     def __str__(self):
         return f'#{self.id} Расход: {self.sponsor} на сумму {self.price}'
 
-    def get_debt_value(self, debts_count=None):
-        debts_count = debts_count or self.py_debtors.count()
-        return self.price // debts_count
+    def get_debt_value(self):
+        return self.price // self.party.members.count()
 
     def get_unknown_debt_price(self):
         known_debt = self.debts.aggregate(models.Sum('price'))['price__sum'] or 0
@@ -86,7 +101,7 @@ class Debt(models.Model):
     payment = models.ForeignKey(
         Payment, models.CASCADE, verbose_name='Расход', related_name='debts')
     debtor = models.ForeignKey(
-        User, models.PROTECT, verbose_name='Должник', related_name='debtors')
+        User, models.PROTECT, verbose_name='Должник', related_name='debts')
     price = models.FloatField(verbose_name='Сумма')
     comment = models.CharField(verbose_name='Комментарий', max_length=300, blank=True, null=True)
 
