@@ -13,6 +13,7 @@ class User(AbstractUser):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
     def get_full_balance(self):
+        # ToDo: deprecated
         print(self.id, self.username)
 
         sum_p = 0

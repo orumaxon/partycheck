@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Prefetch, Sum, F
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -10,6 +10,7 @@ from .forms import (
 )
 from .models import Party, Payment, Transaction, Debt
 from common.views.mixins import SigninRequiredMixin
+from account.models import User
 
 
 class PartyListView(SigninRequiredMixin, generic.ListView):
@@ -18,9 +19,11 @@ class PartyListView(SigninRequiredMixin, generic.ListView):
     ordering = 'id'
 
     def get_queryset(self):
-        self.queryset = self.model.objects.filter(
-            Q(creator=self.request.user) | Q(members__in={self.request.user})
-        ).distinct()
+        self.queryset = (
+            self.request.user.members_parties.select_related('creator')
+            .prefetch_related(Prefetch('members', queryset=User.objects.only('id', 'username')))
+            .only('name', 'creator__id', 'creator__username')
+        )
         return super().get_queryset()
 
 
@@ -28,9 +31,30 @@ class PartyDetailView(SigninRequiredMixin, generic.DetailView):
     model = Party
     template_name = 'party/detail.html'
 
+    def get_queryset(self):
+        prefetch_for_debts = (
+            Debt.objects.select_related('debtor')
+            .only('id', 'price', 'comment', 'debtor__id', 'debtor__username', 'payment__id')
+        )
+        prefetch_for_payments = (
+            Payment.objects.select_related('sponsor')
+            .prefetch_related(Prefetch('debts', queryset=prefetch_for_debts))
+            .annotate(unknown_debt_price=F('price') - Sum('debts__price'))
+            .only('id', 'price', 'comment', 'sponsor__id', 'sponsor__username', 'party__id')
+        )
+        self.queryset = (
+            self.model.objects
+            .prefetch_related(Prefetch('payments', queryset=prefetch_for_payments))
+            .prefetch_related('transactions', 'transactions__sender', 'transactions__recipient')
+        )
+        return super().get_queryset()
+
     def dispatch(self, request, *args, **kwargs):
-        object_id = kwargs[self.pk_url_kwarg]
-        if object_id not in request.user.members_parties.values_list('id', flat=True):
+        qs = (
+            self.model.objects.prefetch_related('members')
+            .filter(members__id=self.request.user.id)
+        )
+        if not qs.exists():
             return redirect('party:list')
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
 

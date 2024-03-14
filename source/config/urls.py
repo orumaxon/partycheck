@@ -33,4 +33,5 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('party/', include('party.urls')),
     path('', HomeView.as_view()),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]

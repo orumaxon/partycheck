@@ -23,12 +23,21 @@ class Party(CreatedAtMixin, models.Model):
         for member in self.members.all():
             sum_d = 0
 
-            for debt in member.debts.filter(payment__party_id=self.id).exclude(payment__sponsor_id=member.id):
+            member_debts = (
+                member.debts.select_related('payment__sponsor')
+                .filter(payment__party_id=self.id)
+                .exclude(payment__sponsor_id=member.id)
+            )
+            for debt in member_debts:
                 sum_d += debt.price
                 key = (member, debt.payment.sponsor)
                 debts_data[key] = debts_data.get(key, 0) + debt.price
 
-            for transaction in member.sender_transactions.filter(party=self.id):
+            member_transactions = (
+                member.sender_transactions.select_related('recipient')
+                .filter(party=self.id)
+            )
+            for transaction in member_transactions:
                 sum_d -= transaction.value
                 key = (member, transaction.recipient)
                 debts_data[key] = debts_data.get(key, 0) - transaction.value
@@ -44,20 +53,20 @@ class Party(CreatedAtMixin, models.Model):
         # ToDo: оптимизировать запросы
         for member in self.members.all():
 
-            sum_p = member.sponsor_payments.filter(party=self.id).\
+            sum_p = member.sponsor_payments.filter(party=self.id). \
                 aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Потратил: {sum_p}')
 
-            sum_d = member.debts.filter(payment__party_id=self.id).\
+            sum_d = member.debts.filter(payment__party_id=self.id). \
                 aggregate(models.Sum('price'))['price__sum'] or 0
             # print(f'Должен: {sum_d}')
 
-            sum_st = member.sender_transactions.filter(party=self.id).\
-                aggregate(models.Sum('value'))['value__sum'] or 0
+            sum_st = member.sender_transactions.filter(party=self.id). \
+                 aggregate(models.Sum('value'))['value__sum'] or 0
             # print(f'Отдал: {sum_st}')
 
-            sum_rt = member.recipient_transactions.filter(party=self.id).\
-                aggregate(models.Sum('value'))['value__sum'] or 0
+            sum_rt = member.recipient_transactions.filter(party=self.id). \
+                 aggregate(models.Sum('value'))['value__sum'] or 0
             # print(f'Получил: {sum_rt}')
 
             sum_ = sum_p - sum_d + sum_st - sum_rt

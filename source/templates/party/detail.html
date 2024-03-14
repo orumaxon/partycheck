@@ -49,12 +49,12 @@
 
                   <tbody>
                     {% for p in party.payments.all %}
-                        <tr class="table-secondary {% if p.get_unknown_debt_price > 0 %}table-danger{% else %}table-success{% endif %}">
+                        <tr class="table-secondary {% if p.unknown_debt_price > 0 %}table-danger{% else %}table-success{% endif %}">
                           <th scope="row">{{ p.id }}</th>
                           <td >{{ p.sponsor }}</td>
                           <td>{{ p.comment|default:"" }}</td>
                           <td>{{ p.price }}</td>
-                          <td class="col-1">{{ p.get_unknown_debt_price }}</td>
+                          <td class="col-1">{{ p.unknown_debt_price }}</td>
                           <td class="text-end">
                               <a href="{% url 'party:add_payment_debt' party.id p.id %}"
                                  class="btn btn-sm btn-outline-secondary">
