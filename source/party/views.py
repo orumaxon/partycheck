@@ -1,3 +1,5 @@
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 from django.db.models import Q, Prefetch, Sum, F
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
@@ -121,6 +123,8 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
             ]
             Debt.objects.bulk_create(debts)
 
+        key = make_template_fragment_key("party_info", [self.request.user.username])
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -148,6 +152,9 @@ class DebtCreateView(SigninRequiredMixin, generic.CreateView):
         form.instance.debtor = self.request.user
         form.full_clean()
         form.save()
+
+        key = make_template_fragment_key("party_info", [self.request.user.username])
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -162,6 +169,9 @@ class DebtSendView(SigninRequiredMixin, generic.View):
             value=debt.price,
         )
         url = reverse('party:detail', kwargs=self.kwargs)
+
+        key = make_template_fragment_key("party_info", [self.request.user.username])
+        cache.delete(key)
         return HttpResponseRedirect(url)
 
 
@@ -191,4 +201,7 @@ class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
         form.instance.sender = self.request.user
         form.full_clean()
         form.save()
+
+        key = make_template_fragment_key("party_info", [self.request.user.username])
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
