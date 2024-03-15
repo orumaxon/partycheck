@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, login, views
 from django.views import generic
 
+from common.views.mixins import SigninRequiredMixin
+
 from .forms import SignInForm, SignUpForm
 from .models import User
 
@@ -32,6 +34,6 @@ class SingOutView(views.LogoutView):
     next_page = '/'
 
 
-class AccountDetailView(generic.DetailView):
+class ProfileView(SigninRequiredMixin, generic.TemplateView):
     model = User
     template_name = 'account/account.html'

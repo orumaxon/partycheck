@@ -43,7 +43,8 @@
                       </a>
                       <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownUser1"
                           style="inset: auto 0px auto auto">
-{#                              <li><a class="dropdown-item" href="{% url 'account:detail' user.id %}">Профиль</a></li>#}
+                          <li><a class="dropdown-item" href="{% url 'account:profile' %}">Профиль</a></li>
+                          <li><a class="dropdown-item" href="{% url 'party:list' %}">Компании</a></li>
 {#                              <li><a class="dropdown-item" href="#">Настройки</a></li>#}
 {#                              <li><hr class="dropdown-divider"></li>#}
                           <li>
