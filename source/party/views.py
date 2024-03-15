@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
-from django.db.models import Q, Prefetch, Sum, F
+from django.db.models import Prefetch, Sum, F
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -41,7 +42,7 @@ class PartyDetailView(SigninRequiredMixin, generic.DetailView):
         prefetch_for_payments = (
             Payment.objects.select_related('sponsor')
             .prefetch_related(Prefetch('debts', queryset=prefetch_for_debts))
-            .annotate(unknown_debt_price=F('price') - Sum('debts__price'))
+            .annotate(unknown_debt_price=Coalesce((F('price') - Sum('debts__price')), 0.0))
             .only('id', 'price', 'comment', 'sponsor__id', 'sponsor__username', 'party__id')
         )
         self.queryset = (
@@ -123,8 +124,8 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
             ]
             Debt.objects.bulk_create(debts)
 
-        key = make_template_fragment_key("party_info", [self.request.user.username])
-        cache.delete(key)
+        # key = make_template_fragment_key("party_info", [self.request.user.username])
+        # cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -153,8 +154,8 @@ class DebtCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        key = make_template_fragment_key("party_info", [self.request.user.username])
-        cache.delete(key)
+        # key = make_template_fragment_key("party_info", [self.request.user.username])
+        # cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -170,8 +171,8 @@ class DebtSendView(SigninRequiredMixin, generic.View):
         )
         url = reverse('party:detail', kwargs=self.kwargs)
 
-        key = make_template_fragment_key("party_info", [self.request.user.username])
-        cache.delete(key)
+        # key = make_template_fragment_key("party_info", [self.request.user.username])
+        # cache.delete(key)
         return HttpResponseRedirect(url)
 
 
@@ -202,6 +203,6 @@ class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        key = make_template_fragment_key("party_info", [self.request.user.username])
-        cache.delete(key)
+        # key = make_template_fragment_key("party_info", [self.request.user.username])
+        # cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
