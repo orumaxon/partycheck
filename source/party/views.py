@@ -42,7 +42,7 @@ class PartyDetailView(SigninRequiredMixin, generic.DetailView):
         prefetch_for_payments = (
             Payment.objects.select_related('sponsor')
             .prefetch_related(Prefetch('debts', queryset=prefetch_for_debts))
-            .annotate(unknown_debt_price=Coalesce((F('price') - Sum('debts__price')), 0.0))
+            .annotate(unknown_debt_price=Coalesce((F('price') - Sum('debts__price')), F('price')))
             .only('id', 'price', 'comment', 'sponsor__id', 'sponsor__username', 'party__id')
         )
         self.queryset = (
