@@ -124,8 +124,11 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
             ]
             Debt.objects.bulk_create(debts)
 
-        # key = make_template_fragment_key("party_info", [self.request.user.username])
-        # cache.delete(key)
+        key = make_template_fragment_key(
+            "party_info",
+            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
+        )
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -154,8 +157,11 @@ class DebtCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        # key = make_template_fragment_key("party_info", [self.request.user.username])
-        # cache.delete(key)
+        key = make_template_fragment_key(
+            "party_info",
+            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
+        )
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -171,8 +177,11 @@ class DebtSendView(SigninRequiredMixin, generic.View):
         )
         url = reverse('party:detail', kwargs=self.kwargs)
 
-        # key = make_template_fragment_key("party_info", [self.request.user.username])
-        # cache.delete(key)
+        key = make_template_fragment_key(
+            "party_info",
+            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
+        )
+        cache.delete(key)
         return HttpResponseRedirect(url)
 
 
@@ -203,6 +212,9 @@ class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        # key = make_template_fragment_key("party_info", [self.request.user.username])
-        # cache.delete(key)
+        key = make_template_fragment_key(
+            "party_info",
+            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
+        )
+        cache.delete(key)
         return HttpResponseRedirect(self.get_success_url())

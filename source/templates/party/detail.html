@@ -1,6 +1,7 @@
 <!doctype html>
 {% extends 'page.html' %}
 {% load static %}
+{% load cache %}
 
 {% block title %}{{ party.name }}{% endblock %}
 
@@ -31,6 +32,7 @@
 {% endblock %}
 
 {% block page_main %}
+{% cache 10 party_info party.id request.user.username %}
     <div class="row">
         <div class="col-lg-7">
             <div class="table-responsive">
@@ -175,4 +177,5 @@
             </div>
         </div>
     </div>
+{% endcache %}
 {% endblock %}
