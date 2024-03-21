@@ -11,5 +11,7 @@
             <h4>@{{ user }}</h4>
             <p><a href="{% url 'party:list' %}">Компании</a></p>
         </div>
+        <p>Всего должны: {{ full_payments }}</p>
+        <p>Всего должен: {{ full_debts }}</p>
     </div>
 {% endblock %}

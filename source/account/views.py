@@ -34,6 +34,13 @@ class SingOutView(views.LogoutView):
     next_page = '/'
 
 
-class ProfileView(SigninRequiredMixin, generic.TemplateView):
+class AccountView(SigninRequiredMixin, generic.TemplateView):
     model = User
     template_name = 'account/account.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_debts'] = user.get_debts_sum(exclude_self_sponsor=True) - user.get_senders_transactions_sum()
+        context['full_payments'] = user.get_payments_sum(exclude_self_debts=True) - user.get_recipient_transactions_sum()
+        return context

@@ -53,21 +53,11 @@ class Party(CreatedAtMixin, models.Model):
         # ToDo: оптимизировать запросы
         for member in self.members.all():
 
-            sum_p = member.sponsor_payments.filter(party=self.id). \
-                aggregate(models.Sum('price'))['price__sum'] or 0
-            # print(f'Потратил: {sum_p}')
+            sum_p = member.get_payments_sum(party_id=self.id)
+            sum_rt = member.get_recipient_transactions_sum(party_id=self.id)
 
-            sum_d = member.debts.filter(payment__party_id=self.id). \
-                aggregate(models.Sum('price'))['price__sum'] or 0
-            # print(f'Должен: {sum_d}')
-
-            sum_st = member.sender_transactions.filter(party=self.id). \
-                 aggregate(models.Sum('value'))['value__sum'] or 0
-            # print(f'Отдал: {sum_st}')
-
-            sum_rt = member.recipient_transactions.filter(party=self.id). \
-                 aggregate(models.Sum('value'))['value__sum'] or 0
-            # print(f'Получил: {sum_rt}')
+            sum_d = member.get_debts_sum(party_id=self.id)
+            sum_st = member.get_senders_transactions_sum(party_id=self.id)
 
             sum_ = sum_p - sum_d + sum_st - sum_rt
             debt_list_.append((member, sum_))

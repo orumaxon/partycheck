@@ -12,6 +12,57 @@ class User(AbstractUser):
     def clean(self):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
+    def get_payments_sum(self, party_id=None, exclude_self_debts=False):
+        filter_params = models.Q(party_id=party_id) if party_id else models.Q()
+        sum_p = (
+            self.sponsor_payments.filter(filter_params)
+            .aggregate(models.Sum('price'))['price__sum']
+        ) or 0
+
+        if exclude_self_debts:
+            filter_params = models.Q(payment__party_id=party_id) if party_id else models.Q()
+            sum_p_self = (
+                self.debts.filter(filter_params)
+                .filter(payment__sponsor_id=self.id)
+                .aggregate(models.Sum('price'))['price__sum']
+            ) or 0
+            sum_p -= sum_p_self
+
+        # print(f'Потратил: {sum_p}')
+        return sum_p
+
+    def get_recipient_transactions_sum(self, party_id=None):
+        filter_params = models.Q(party_id=party_id) if party_id else models.Q()
+        sum_rt = (
+             self.recipient_transactions.filter(filter_params)
+             .aggregate(models.Sum('value'))['value__sum']
+         ) or 0
+
+        # print(f'Получил: {sum_rt}')
+        return sum_rt
+
+    def get_debts_sum(self, party_id=None, exclude_self_sponsor=False):
+        filter_params = models.Q(payment__party_id=party_id) if party_id else models.Q()
+        exclude_params = models.Q(payment__sponsor_id=self.id) if exclude_self_sponsor else models.Q()
+
+        sum_d = (
+            self.debts.filter(filter_params).exclude(exclude_params)
+            .aggregate(models.Sum('price'))['price__sum']
+        ) or 0
+
+        # print(f'Должен: {sum_d}')
+        return sum_d
+
+    def get_senders_transactions_sum(self, party_id=None):
+        filter_params = models.Q(party_id=party_id) if party_id else models.Q()
+        sum_st = (
+            self.sender_transactions.filter(filter_params)
+            .aggregate(models.Sum('value'))['value__sum']
+        ) or 0
+
+        # print(f'Отдал: {sum_st}')
+        return sum_st
+
     def get_full_balance(self):
         # ToDo: deprecated
         print(self.id, self.username)

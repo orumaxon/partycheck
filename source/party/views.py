@@ -1,5 +1,3 @@
-from django.core.cache import cache
-from django.core.cache.utils import make_template_fragment_key
 from django.db.models import Prefetch, Sum, F
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
@@ -7,13 +5,14 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
+from account.models import User
+from common.views.mixins import SigninRequiredMixin, CacheViewMixin
+
 from .forms import (
     DebtCreateForm, PartyCreateForm, PaymentCreateForm,
     PartyUpdateForm, TransactionCreateForm,
 )
 from .models import Party, Payment, Transaction, Debt
-from common.views.mixins import SigninRequiredMixin
-from account.models import User
 
 
 class PartyListView(SigninRequiredMixin, generic.ListView):
@@ -68,7 +67,7 @@ class PartyCreateView(SigninRequiredMixin, generic.CreateView):
     template_name = 'party/create.html'
 
     def get_success_url(self):
-        return '/'
+        return reverse('party:list', kwargs=self.kwargs)
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -91,7 +90,7 @@ class PartyUpdateView(SigninRequiredMixin, generic.UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
+class PaymentCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
     model = Payment
     form_class = PaymentCreateForm
     template_name = 'party/add_payment.html'
@@ -124,15 +123,12 @@ class PaymentCreateView(SigninRequiredMixin, generic.CreateView):
             ]
             Debt.objects.bulk_create(debts)
 
-        key = make_template_fragment_key(
-            "party_info",
-            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
-        )
-        cache.delete(key)
+        cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
+        self.clear_cache('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DebtCreateView(SigninRequiredMixin, generic.CreateView):
+class DebtCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
     model = Debt
     form_class = DebtCreateForm
     template_name = 'party/add_debt.html'
@@ -157,15 +153,14 @@ class DebtCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        key = make_template_fragment_key(
-            "party_info",
-            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
-        )
-        cache.delete(key)
+        cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
+        self.clear_cache('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DebtSendView(SigninRequiredMixin, generic.View):
+class DebtSendView(SigninRequiredMixin, CacheViewMixin, generic.View):
+    pk_url_kwarg = "pk"
+
     def get(self, request, **kwargs):
         debt_id = self.kwargs.pop('debt_id')
         debt = Debt.objects.get(id=debt_id)
@@ -177,15 +172,12 @@ class DebtSendView(SigninRequiredMixin, generic.View):
         )
         url = reverse('party:detail', kwargs=self.kwargs)
 
-        key = make_template_fragment_key(
-            "party_info",
-            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
-        )
-        cache.delete(key)
+        cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
+        self.clear_cache('party_info', cache_args)
         return HttpResponseRedirect(url)
 
 
-class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
+class TransactionCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
     model = Transaction
     form_class = TransactionCreateForm
     template_name = 'party/add_transaction.html'
@@ -212,9 +204,6 @@ class TransactionCreateView(SigninRequiredMixin, generic.CreateView):
         form.full_clean()
         form.save()
 
-        key = make_template_fragment_key(
-            "party_info",
-            [self.kwargs[self.pk_url_kwarg], self.request.user.username],
-        )
-        cache.delete(key)
+        cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
+        self.clear_cache('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())
