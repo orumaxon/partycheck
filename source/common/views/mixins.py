@@ -9,9 +9,32 @@ class SigninRequiredMixin(LoginRequiredMixin):
         return reverse('account:signin')
 
 
-class CacheViewMixin:
+class CacheManager:
 
     @staticmethod
-    def clear_cache(cache_name: str = None, cache_args: list = None):
+    def clear(cache_name: str, cache_args: list = None):
         key = make_template_fragment_key(cache_name, cache_args)
-        cache.delete(key)
+        return cache.delete(key)
+
+    @staticmethod
+    def get(cache_name: str, cache_args: list = None):
+        key = make_template_fragment_key(cache_name, cache_args)
+        return cache.get(key)
+
+    @staticmethod
+    def set(cache_name: str, value, cache_args: list = None, **kwargs):
+        key = make_template_fragment_key(cache_name, cache_args)
+        return cache.set(key, value, **kwargs)
+
+    @staticmethod
+    def get_or_set(cache_name: str, default, cache_args: list = None, **kwargs):
+        key = make_template_fragment_key(cache_name, cache_args)
+        return cache.get_or_set(key, default, **kwargs)
+
+
+class CacheMixin:
+    _cache_manager = CacheManager
+
+    @property
+    def cache(self):
+        return self._cache_manager()

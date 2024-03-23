@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block page_main %}
-{% cache 10 party_info party.id request.user.username %}
+{% cache 10 party_info party.id user.username %}
     <div class="row">
         <div class="col-lg-7">
             <div class="table-responsive">

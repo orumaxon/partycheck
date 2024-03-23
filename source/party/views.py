@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic
 
 from account.models import User
-from common.views.mixins import SigninRequiredMixin, CacheViewMixin
+from common.views.mixins import CacheMixin, SigninRequiredMixin
 
 from .forms import (
     DebtCreateForm, PartyCreateForm, PaymentCreateForm,
@@ -90,7 +90,7 @@ class PartyUpdateView(SigninRequiredMixin, generic.UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PaymentCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
+class PaymentCreateView(SigninRequiredMixin, CacheMixin, generic.CreateView):
     model = Payment
     form_class = PaymentCreateForm
     template_name = 'party/add_payment.html'
@@ -124,11 +124,11 @@ class PaymentCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView)
             Debt.objects.bulk_create(debts)
 
         cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
-        self.clear_cache('party_info', cache_args)
+        self.cache.clear('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DebtCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
+class DebtCreateView(SigninRequiredMixin, CacheMixin, generic.CreateView):
     model = Debt
     form_class = DebtCreateForm
     template_name = 'party/add_debt.html'
@@ -154,11 +154,11 @@ class DebtCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
         form.save()
 
         cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
-        self.clear_cache('party_info', cache_args)
+        self.cache.clear('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DebtSendView(SigninRequiredMixin, CacheViewMixin, generic.View):
+class DebtSendView(SigninRequiredMixin, CacheMixin, generic.View):
     pk_url_kwarg = "pk"
 
     def get(self, request, **kwargs):
@@ -173,11 +173,11 @@ class DebtSendView(SigninRequiredMixin, CacheViewMixin, generic.View):
         url = reverse('party:detail', kwargs=self.kwargs)
 
         cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
-        self.clear_cache('party_info', cache_args)
+        self.cache.clear('party_info', cache_args)
         return HttpResponseRedirect(url)
 
 
-class TransactionCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateView):
+class TransactionCreateView(SigninRequiredMixin, CacheMixin, generic.CreateView):
     model = Transaction
     form_class = TransactionCreateForm
     template_name = 'party/add_transaction.html'
@@ -205,5 +205,5 @@ class TransactionCreateView(SigninRequiredMixin, CacheViewMixin, generic.CreateV
         form.save()
 
         cache_args = [self.kwargs[self.pk_url_kwarg], self.request.user.username]
-        self.clear_cache('party_info', cache_args)
+        self.cache.clear('party_info', cache_args)
         return HttpResponseRedirect(self.get_success_url())

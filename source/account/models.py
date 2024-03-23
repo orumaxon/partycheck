@@ -13,6 +13,7 @@ class User(AbstractUser):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
     def get_payments_sum(self, party_id=None, exclude_self_debts=False):
+        """Общая сумма потраченных средств пользователем"""
         filter_params = models.Q(party_id=party_id) if party_id else models.Q()
         sum_p = (
             self.sponsor_payments.filter(filter_params)
@@ -32,6 +33,7 @@ class User(AbstractUser):
         return sum_p
 
     def get_recipient_transactions_sum(self, party_id=None):
+        """Общая сумма, которую вернули пользователю"""
         filter_params = models.Q(party_id=party_id) if party_id else models.Q()
         sum_rt = (
              self.recipient_transactions.filter(filter_params)
@@ -42,6 +44,7 @@ class User(AbstractUser):
         return sum_rt
 
     def get_debts_sum(self, party_id=None, exclude_self_sponsor=False):
+        """Общая сумма долгов пользователя"""
         filter_params = models.Q(payment__party_id=party_id) if party_id else models.Q()
         exclude_params = models.Q(payment__sponsor_id=self.id) if exclude_self_sponsor else models.Q()
 
@@ -54,6 +57,7 @@ class User(AbstractUser):
         return sum_d
 
     def get_senders_transactions_sum(self, party_id=None):
+        """Общая сумма, которую пользователь вернул"""
         filter_params = models.Q(party_id=party_id) if party_id else models.Q()
         sum_st = (
             self.sender_transactions.filter(filter_params)
@@ -62,6 +66,14 @@ class User(AbstractUser):
 
         # print(f'Отдал: {sum_st}')
         return sum_st
+
+    def get_full_debts(self):
+        """Сколько должен сам пользователь"""
+        return self.get_debts_sum(exclude_self_sponsor=True) - self.get_senders_transactions_sum()
+
+    def get_full_payments(self):
+        """Сколько должны пользователю"""
+        return self.get_payments_sum(exclude_self_debts=True) - self.get_recipient_transactions_sum()
 
     def get_full_balance(self):
         # ToDo: deprecated
