@@ -32,7 +32,6 @@
 {% endblock %}
 
 {% block page_main %}
-{% cache 10 party_info party.id user.username %}
     <div class="row">
         <div class="col-lg-7">
             <div class="table-responsive">
@@ -74,6 +73,7 @@
                                             <tr>
                                                 <th scope="col">v</th>
                                                 <th scope="col">Должник</th>
+                                                <th scope="col">Коммент</th>
                                                 <th scope="col">Сумма из чека</th>
                                                 <th scope="col"></th>
                                             </tr>
@@ -82,14 +82,21 @@
                                         {% for d in p.debts.all %}
                                             <tr>
                                                 <th class="col-1" scope="row">></th>
-                                                <td class="col-4">{{ d.debtor }}</td>
-                                                <td class="col-4">{{ d.price }}</td>
+                                                <td class="col-2">{{ d.debtor }}</td>
+                                                <td class="col-3">{{ d.comment|default:"" }}</td>
+                                                <td class="col-3">{{ d.price }}</td>
                                                 <td class="text-end">
-                                                  <a href="{% url 'party:send_debt' party.id d.id %}"
-                                                     class="btn btn-sm btn-outline-secondary">
-                                                      <i class="bi bi-cash-stack"></i>
-                                                      Перевести
-                                                  </a>
+                                                    {% if not d.transaction.id %}
+                                                        {% if d.debtor_id != p.sponsor_id and d.debtor_id == user.id %}
+                                                          <a href="{% url 'party:send_debt' party.id d.id %}"
+                                                             class="btn btn-sm btn-outline-success">
+                                                              <i class="bi bi-cash-stack"></i>
+                                                              Перевести
+                                                          </a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        Переведено #{{ d.transaction.id }}
+                                                    {% endif %}
                                                 </td>
                                             </tr>
                                           </tbody>
@@ -118,32 +125,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for key, value in party.get_debts.items %}
+                    {% for key, value in party_debts.items %}
                         <tr>
                           <th scope="row">#</th>
                           <td>{{ key.0 }}</td>
                           <td>{{ key.1 }}</td>
-                          <td>{{ value }}</td>
-                        </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover caption-top">
-                    <caption>Баланс</caption>
-                  <thead class="table-dark">
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Имя</th>
-                      <th scope="col">Баланс</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for m, value in party.get_debt_by_members %}
-                        <tr class="{% if value < 0 %}table-danger{% elif value == 0 %}table-light{% else %}table-success{% endif %}">
-                          <th scope="row">{{ m.id }}</th>
-                          <td>{{ m }}</td>
                           <td>{{ value }}</td>
                         </tr>
                     {% endfor %}
@@ -177,5 +163,4 @@
             </div>
         </div>
     </div>
-{% endcache %}
 {% endblock %}

@@ -27,6 +27,7 @@ class Party(CreatedAtMixin, models.Model):
                 member.debts.select_related('payment__sponsor')
                 .filter(payment__party_id=self.id)
                 .exclude(payment__sponsor_id=member.id)
+                .only('price', 'debtor__id', 'payment__sponsor__username')
             )
             for debt in member_debts:
                 sum_d += debt.price
@@ -121,6 +122,8 @@ class Transaction(CreatedAtMixin, models.Model):
         User, models.PROTECT, verbose_name='Получатель', related_name='recipient_transactions')
     value = models.FloatField(verbose_name='Сумма перевода')
     comment = models.CharField(verbose_name='Краткий комментарий', max_length=300, blank=True, null=True)
+    debt = models.OneToOneField(
+        Debt, models.CASCADE, verbose_name='Долг, по которому был сделан перевод', blank=True, null=True)
 
     def __str__(self):
         return f'#{self.id} Перевод: {self.sender} -> {self.recipient}: {self.value}'

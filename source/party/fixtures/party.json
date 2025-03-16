@@ -1,0 +1,178 @@
+[
+  {
+    "model": "party.party",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-03-09T08:51:42.811Z",
+      "name": "Test-2",
+      "creator": 1,
+      "members": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 1,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T11:01:15.377Z",
+      "sponsor": 1,
+      "price": 1000.0,
+      "comment": "магазин",
+      "py_debtors": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 2,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T11:03:45.907Z",
+      "sponsor": 1,
+      "price": 200.0,
+      "comment": "кофе",
+      "py_debtors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 3,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T12:44:25.351Z",
+      "sponsor": 1,
+      "price": 200.0,
+      "comment": null,
+      "py_debtors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 4,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T12:44:40.230Z",
+      "sponsor": 1,
+      "price": 450.0,
+      "comment": null,
+      "py_debtors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 5,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T12:53:51.661Z",
+      "sponsor": 1,
+      "price": 136.0,
+      "comment": null,
+      "py_debtors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 6,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T23:43:02.667Z",
+      "sponsor": 1,
+      "price": 1200.0,
+      "comment": null,
+      "py_debtors": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.payment",
+    "pk": 7,
+    "fields": {
+      "party": 1,
+      "created_at": "2024-03-09T23:51:03.190Z",
+      "sponsor": 1,
+      "price": 20.0,
+      "comment": null,
+      "py_debtors": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "party.transaction",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-03-09T11:01:01.778Z",
+      "party": 1,
+      "sender": 1,
+      "recipient": 1,
+      "value": 100.0,
+      "comment": "на чай"
+    }
+  },
+  {
+    "model": "party.transaction",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-03-09T11:04:55.044Z",
+      "party": 1,
+      "sender": 2,
+      "recipient": 1,
+      "value": 50.0,
+      "comment": "сдача"
+    }
+  },
+  {
+    "model": "party.transaction",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-03-09T11:54:38.906Z",
+      "party": 1,
+      "sender": 1,
+      "recipient": 1,
+      "value": 100.0,
+      "comment": null
+    }
+  },
+  {
+    "model": "party.transaction",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-03-09T23:24:51.805Z",
+      "party": 1,
+      "sender": 1,
+      "recipient": 2,
+      "value": 100.0,
+      "comment": null
+    }
+  },
+  {
+    "model": "party.transaction",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-03-09T23:50:54.863Z",
+      "party": 1,
+      "sender": 1,
+      "recipient": 2,
+      "value": 20.0,
+      "comment": null
+    }
+  }
+]

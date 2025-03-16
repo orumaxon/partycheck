@@ -35,8 +35,8 @@ class PartyDetailView(SigninRequiredMixin, generic.DetailView):
 
     def get_queryset(self):
         prefetch_for_debts = (
-            Debt.objects.select_related('debtor')
-            .only('id', 'price', 'comment', 'debtor__id', 'debtor__username', 'payment__id')
+            Debt.objects.select_related('debtor', 'transaction')
+            .only('id', 'price', 'comment', 'debtor__id', 'debtor__username', 'payment__id', 'transaction__id')
         )
         prefetch_for_payments = (
             Payment.objects.select_related('sponsor')
@@ -59,6 +59,11 @@ class PartyDetailView(SigninRequiredMixin, generic.DetailView):
         if not qs.exists():
             return redirect('party:list')
         return super(PartyDetailView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['party_debts'] = self.object.get_debts()
+        return context
 
 
 class PartyCreateView(SigninRequiredMixin, generic.CreateView):
@@ -169,6 +174,7 @@ class DebtSendView(SigninRequiredMixin, CacheMixin, generic.View):
             sender=debt.debtor,
             recipient=debt.payment.sponsor,
             value=debt.price,
+            debt=debt,
         )
         url = reverse('party:detail', kwargs=self.kwargs)
 
